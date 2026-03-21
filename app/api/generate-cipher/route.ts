@@ -62,7 +62,6 @@ function selectCipherRaw(difficulty: Difficulty): CipherResult {
             () => normal.base64Encode(),
             () => normal.rot13(),
             () => normal.atbash(),
-            () => normal.combination(),
         ];
         return pool[pickIndex(pool, difficulty)]();
     }
