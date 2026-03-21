@@ -69,8 +69,6 @@ interface Props {
 
 export default function DifficultySelector({ value, onChange, disabled = false }: Props) {
     const [hovered,  setHovered]  = useState<Difficulty | null>(null);
-    const [animKey,  setAnimKey]  = useState(0);
-    const [slideDir, setSlideDir] = useState<'left' | 'right' | null>(null);
 
     const lastChangeRef = useRef(0);
     const prevIdxRef    = useRef(OPTIONS.findIndex(o => o.value === value));
@@ -83,21 +81,11 @@ export default function DifficultySelector({ value, onChange, disabled = false }
         if (now - lastChangeRef.current < THROTTLE_MS) return;
         lastChangeRef.current = now;
         const newIdx = OPTIONS.findIndex(o => o.value === d);
-        setSlideDir(newIdx > prevIdxRef.current ? 'left' : 'right');
         prevIdxRef.current = newIdx;
-        setAnimKey(k => k + 1);
         onChange(d);
     };
 
     useEffect(() => { prevIdxRef.current = selIdx; }, [selIdx]);
-
-    const contentAnim = slideDir === 'left'
-        ? `dsSlideFromRight ${Math.round(SLIDE_MS * 0.65)}ms ${EASING} both`
-        : slideDir === 'right'
-            ? `dsSlideFromLeft ${Math.round(SLIDE_MS * 0.65)}ms ${EASING} both`
-            : undefined;
-
-    const rightOffset = (OPTIONS.length - 1 - selIdx) * STUB_W;
 
     const pillStyle = (opt: Option): React.CSSProperties => ({
         fontFamily:    "'JetBrains Mono', monospace",

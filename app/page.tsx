@@ -16,7 +16,8 @@ export default function Home() {
     const [difficulty, setDifficulty]       = useState<Difficulty>('normal');
     const [reducedMotion, setReducedMotion] = useState(false);
     const [showHowToPlay, setShowHowToPlay] = useState(false);
-    const [theme, setTheme]                 = useState<'dark' | 'light'>('dark');
+    // theme state is consumed by SettingsToggle via onThemeChange callback
+    const setTheme = useState<'dark' | 'light'>('dark')[1];
 
     const [page, setPage]         = useState(0);
     const [gameKey, setGameKey]   = useState(0);

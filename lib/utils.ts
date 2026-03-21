@@ -3,7 +3,6 @@
 // Uses random-words package for single words (~5000 words, no static list)
 // Uses procedural template generation for easy mode phrases (huge combo space)
 
-// @ts-ignore - random-words types vary by version
 import randomWords from 'random-words';
 
 // Morse map lives here so both normal.ts and hard.ts can import it

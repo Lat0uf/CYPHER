@@ -106,7 +106,7 @@ const CONTROLS: [string, string][] = [
     ['ESC',       'Close this panel'],
 ];
 
-export default function HowToPlay({ isOpen, onClose }: Props) {
+export default function HowToPlay({ isOpen }: Props) {
     const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
