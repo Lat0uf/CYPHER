@@ -52,9 +52,9 @@ Light mode exists too (who even uses light mode though).
 
 ## 🛠 Stack
 
-- **Next.js 14:** App Router with server-side cipher generation and answer validation
-- **TypeScript:** strict typing across the entire codebase
-- **Tailwind CSS:** utility-first styling with consistent design tokens
+- **Next.js 14:** app router with server-side cipher generation and answer validation
+- **TypeScript:** makes the codebase easier to navigate and harder to accidentally break
+- **Tailwind CSS:** styling stays in the component without writing a single custom CSS class
 - **Canvas API:** hardware-accelerated matrix rain background
 - **Web Crypto API:** answers are SHA-256 hashed server-side and the plaintext never leaves the server
 - **Bun:** runtime and package manager
@@ -70,6 +70,6 @@ Things that are broken, half-baked, or just need more attention:
 - The mouse parallax on the rain feels cheap rather than satisfying and needs proper tuning
 - The Connection Lost screen buttons blend into the stat cards and don't feel like actual buttons
 - Sound design needs a balancing pass and a few more effects in the right places
-- Matrix rain needs further improvement and polishing
+- Matrix rain needs improvement and polishing
 - Game design pass needed across all difficulties, more playtesting and better pacing
 - General code cleanup and optimization
