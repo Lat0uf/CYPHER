@@ -202,22 +202,25 @@ export default function MatrixRain({
                 const depthAlpha = 0.55 + col.depth * 0.45;
 
                 for (let t = 0; t < TRAIL_LENGTH; t++) {
-                    const screenPy = headPx - t * FONT_SIZE - scrollOff;
+                    const virtualPy = headPx - t * FONT_SIZE;
+                    const screenPy  = virtualPy - scrollOff;
                     if (screenPy < -FONT_SIZE || screenPy >= viewH) continue;
 
                     const egg = eggByCol.get(i);
                     if (egg) {
-                        const eggTop    = egg.startRow * FONT_SIZE;
-                        const eggBot    = eggTop + egg.text.length * FONT_SIZE;
-                        const virtualPy = headPx - t * FONT_SIZE;
+                        const eggTop = egg.startRow * FONT_SIZE;
+                        const eggBot = eggTop + egg.text.length * FONT_SIZE;
                         if (virtualPy >= eggTop && virtualPy < eggBot) {
+                            // Limit visible egg characters to a short trail window so the
+                            // message reveals letter by letter rather than all at once.
+                            if (t >= 4) continue;
                             const ci = Math.floor((virtualPy - eggTop) / FONT_SIZE);
                             if (ci >= 0 && ci < egg.text.length) {
-                                const a = (t === 0 ? 1.0 : Math.max(0.3, 1.0 - t * 0.2)) * depthAlpha;
+                                const a = (t === 0 ? 1.0 : Math.max(0.3, 1.0 - t * 0.3)) * depthAlpha;
                                 targetCtx.fillStyle = 'rgba(255,255,255,' + a + ')';
                                 targetCtx.fillText(egg.text[ci], x, screenPy);
-                                continue;
                             }
+                            continue;
                         }
                     }
 
@@ -466,8 +469,9 @@ export default function MatrixRain({
     }, []); // mount-only — all props consumed via refs
 
     // CSS 3D tilt — rotates the canvas plane in 3D space based on mouse position.
-    // Runs its own rAF loop so it never interferes with the draw loop.
-    // scale(1.08) keeps edges filled in when the plane rotates.
+    // Lerps back to zero when reduced motion is on rather than snapping, so the
+    // toggle itself doesn't jolt. Runs its own rAF loop, never touches draw logic.
+    // scale(1.08) keeps edges filled when the plane rotates.
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -475,10 +479,13 @@ export default function MatrixRain({
         let rafId: number;
         const MAX_DEG = 8;
         const loop = () => {
-            const targetY =  ((mouseRef.current.x / window.innerWidth)  - 0.5) * 2 * MAX_DEG;
-            const targetX = -((mouseRef.current.y / window.innerHeight) - 0.5) * 2 * MAX_DEG;
-            rotX += (targetX - rotX) * 0.06;
-            rotY += (targetY - rotY) * 0.06;
+            const reduced  = reducedMotionRef.current;
+            const targetY  = reduced ? 0 : ((mouseRef.current.x / window.innerWidth)  - 0.5) * 2 * MAX_DEG;
+            const targetX  = reduced ? 0 : -((mouseRef.current.y / window.innerHeight) - 0.5) * 2 * MAX_DEG;
+            // Slower lerp when returning to zero so toggling motion off unwinds gradually.
+            const lerpK = (rotX === 0 && rotY === 0) ? 0.06 : reduced ? 0.025 : 0.06;
+            rotX += (targetX - rotX) * lerpK;
+            rotY += (targetY - rotY) * lerpK;
             canvas.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.08)`;
             rafId = requestAnimationFrame(loop);
         };
