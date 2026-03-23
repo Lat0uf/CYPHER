@@ -62,12 +62,11 @@ Light mode exists too (who even uses light mode though).
 
 ## 🚧 Known issues and planned work
 
-Things that are broken, half-baked, or just need more attention:
+Things that are half-baked or just need more attention:
 
 - Light mode needs a full rework to actually look good and be readable
 - The difficulty selector has a jittery slide animation that has resisted every fix attempt so far
-- The BEGIN DECRYPTION button doesn't sit well with the rest of the UI and needs a rethink
-- The mouse parallax on the rain feels cheap rather than satisfying and needs proper tuning
+- The BEGIN DECRYPTION button doesn't sit well with the rest of the UI and needs a rework
 - The Connection Lost screen buttons blend into the stat cards and don't feel like actual buttons
 - Sound design needs a balancing pass and a few more effects in the right places
 - Matrix rain needs improvement and polishing
