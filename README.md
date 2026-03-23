@@ -4,11 +4,15 @@
 
 A cipher-breaking browser game where using external decoder tools isn't cheating. It's the whole point.
 
-**[cyph3r.vercel.app](https://cyph3r.vercel.app)**
+**🔗 [cyph3r.vercel.app](https://cyph3r.vercel.app)**
+
+![Solo Project](https://img.shields.io/badge/solo%20project-CS%20uni%20assessment-blue?style=flat-square)
+
+<sub><i>I had this idea sitting in my head for a while, and a CS uni course with an open-ended "build any website" assessment was a good enough reason to just do it.</i></sub>
 
 </div>
 
-> I had this idea sitting in my head for a while, and a CS uni course with an open-ended "build any website" assessment was a good enough reason to just do it.
+---
 
 ## 🎮 What it is
 
