@@ -121,9 +121,14 @@ export default function MatrixRain({
         const makeColumn = (): Column => {
             const trail: number[] = [];
             for (let i = 0; i < TRAIL_LENGTH + 2; i++) trail.push(Math.floor(Math.random() * CHARS.length));
+            // Distribute y across the full cycle: above-screen queue + full virtual space.
+            // Original (0..totalH) put 33% visible at load but ~29% at steady state —
+            // that 4% mismatch was the burst. Including the avg queue depth (4 rows for
+            // the random*-8 reset) in the init range makes load density match steady state.
+            const cycleRows = TRAIL_LENGTH + 4 + Math.ceil(getTotalH() / FONT_SIZE);
             return {
-                y:     Math.random() * Math.ceil(getTotalH() / FONT_SIZE),
-                speed: 0.04 + Math.random() * 0.08,
+                y:     -(TRAIL_LENGTH + 4) + Math.random() * cycleRows,
+                speed: 0.05 + Math.random() * 0.035,
                 chars: trail,
                 depth: Math.random(),
             };
@@ -191,7 +196,7 @@ export default function MatrixRain({
                     col.y += col.speed * spdMul * dt;
                     if (col.y * FONT_SIZE > totalH + FONT_SIZE * TRAIL_LENGTH) {
                         col.y     = Math.random() * -8;
-                        col.speed = 0.04 + Math.random() * 0.08;
+                        col.speed = 0.05 + Math.random() * 0.035;
                         for (let c = 0; c < col.chars.length; c++) col.chars[c] = Math.floor(Math.random() * CHARS.length);
                     }
                 }
@@ -313,7 +318,7 @@ export default function MatrixRain({
                     col.y += col.speed * spdMul; // dt = 1 (one frame)
                     if (col.y * FONT_SIZE > totalH + FONT_SIZE * TRAIL_LENGTH) {
                         col.y     = Math.random() * -8;
-                        col.speed = 0.04 + Math.random() * 0.08;
+                        col.speed = 0.05 + Math.random() * 0.035;
                         for (let ci = 0; ci < col.chars.length; ci++) col.chars[ci] = Math.floor(Math.random() * CHARS.length);
                     }
                 }
@@ -475,6 +480,10 @@ export default function MatrixRain({
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
+        // Set to screen center before first frame so targetX/Y = 0 on load.
+        // Without this, mouseRef starts at {0,0} (top-left), causing an immediate
+        // unwanted tilt that only corrects when the user moves the mouse.
+        mouseRef.current = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
         let rotX = 0, rotY = 0;
         let rafId: number;
         const MAX_DEG = 8;
