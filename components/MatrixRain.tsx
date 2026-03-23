@@ -41,7 +41,7 @@ export default function MatrixRain({
     const pageIndexRef     = useRef(pageIndex);
     const transitionMsRef  = useRef(transitionMs);
     const htpOpenRef       = useRef(htpOpen);
-    const mouseRef         = useRef({ x: 0 });
+    const mouseRef         = useRef({ x: 0, y: 0 });
 
     useEffect(() => { difficultyRef.current    = difficulty;    }, [difficulty]);
     useEffect(() => { speedRef.current         = speed;         }, [speed]);
@@ -147,7 +147,7 @@ export default function MatrixRain({
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        const onMouseMove = (e: MouseEvent) => { mouseRef.current.x = e.clientX; };
+        const onMouseMove = (e: MouseEvent) => { mouseRef.current.x = e.clientX; mouseRef.current.y = e.clientY; };
         window.addEventListener('mousemove', onMouseMove);
 
         // ── Core draw ─────────────────────────────────────────────────────────────
@@ -165,7 +165,6 @@ export default function MatrixRain({
             const spdMul     = getSpeedMul() * speedRef.current;
             const oneScreen  = Math.ceil(w / (FONT_SIZE * 0.85));
             const colSpacing = oneScreen > 0 ? w / oneScreen : FONT_SIZE;
-            const halfW      = w / 2;
 
             if (dt > 0) {
                 const hueTarget = getTargetHue();
@@ -184,10 +183,9 @@ export default function MatrixRain({
             for (const egg of activeEggs) eggByCol.set(egg.col, egg);
 
             for (let i = 0; i < colCount; i++) {
-                const col            = columns[i];
-                const parallaxOffset = (lerpedMouseX - halfW) * col.depth * (60 / Math.max(halfW, 1));
-                const virtualX       = i >= oneScreen ? (i - 2 * oneScreen) * colSpacing : i * colSpacing;
-                const x              = virtualX + parallaxOffset + hOff;
+                const col      = columns[i];
+                const virtualX = i >= oneScreen ? (i - 2 * oneScreen) * colSpacing : i * colSpacing;
+                const x        = virtualX + hOff;
 
                 if (dt > 0) {
                     col.y += col.speed * spdMul * dt;
@@ -204,14 +202,14 @@ export default function MatrixRain({
                 const depthAlpha = 0.55 + col.depth * 0.45;
 
                 for (let t = 0; t < TRAIL_LENGTH; t++) {
-                    const virtualPy = headPx - t * FONT_SIZE;
-                    const screenPy  = virtualPy - scrollOff;
+                    const screenPy = headPx - t * FONT_SIZE - scrollOff;
                     if (screenPy < -FONT_SIZE || screenPy >= viewH) continue;
 
                     const egg = eggByCol.get(i);
                     if (egg) {
-                        const eggTop = egg.startRow * FONT_SIZE;
-                        const eggBot = eggTop + egg.text.length * FONT_SIZE;
+                        const eggTop    = egg.startRow * FONT_SIZE;
+                        const eggBot    = eggTop + egg.text.length * FONT_SIZE;
+                        const virtualPy = headPx - t * FONT_SIZE;
                         if (virtualPy >= eggTop && virtualPy < eggBot) {
                             const ci = Math.floor((virtualPy - eggTop) / FONT_SIZE);
                             if (ci >= 0 && ci < egg.text.length) {
@@ -290,7 +288,7 @@ export default function MatrixRain({
 
                 lerpedScrollOffset     += (pageIndexRef.current * viewH      - lerpedScrollOffset)     * Math.min(lerpK * dt, 0.98);
                 lerpedHorizontalOffset += ((htpOpenRef.current ? w : 0)       - lerpedHorizontalOffset) * Math.min(lerpK * dt, 0.98);
-                lerpedMouseX           += (mouseRef.current.x                  - lerpedMouseX)           * Math.min(0.07 * dt, 0.25);
+                lerpedMouseX           += (mouseRef.current.x - lerpedMouseX) * Math.min(0.07 * dt, 0.25);
 
                 drawFrame(ctx, dt, lerpedScrollOffset, lerpedHorizontalOffset);
                 animId = requestAnimationFrame(loop);
@@ -466,6 +464,27 @@ export default function MatrixRain({
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // mount-only — all props consumed via refs
+
+    // CSS 3D tilt — rotates the canvas plane in 3D space based on mouse position.
+    // Runs its own rAF loop so it never interferes with the draw loop.
+    // scale(1.08) keeps edges filled in when the plane rotates.
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        let rotX = 0, rotY = 0;
+        let rafId: number;
+        const MAX_DEG = 8;
+        const loop = () => {
+            const targetY =  ((mouseRef.current.x / window.innerWidth)  - 0.5) * 2 * MAX_DEG;
+            const targetX = -((mouseRef.current.y / window.innerHeight) - 0.5) * 2 * MAX_DEG;
+            rotX += (targetX - rotX) * 0.06;
+            rotY += (targetY - rotY) * 0.06;
+            canvas.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.08)`;
+            rafId = requestAnimationFrame(loop);
+        };
+        rafId = requestAnimationFrame(loop);
+        return () => cancelAnimationFrame(rafId);
+    }, []);
 
     return (
         <canvas
