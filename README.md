@@ -4,7 +4,7 @@
 
 A cipher-breaking browser game where using external decoder tools isn't cheating. It's the whole point.
 
-**🔗 [cyph3r.vercel.app](https://cyph3r.vercel.app)**
+**🔗 [cyph3r.vercel.app](https://cyph3r.vercel.app) 🔗**
 
 ![Solo Project](https://img.shields.io/badge/%20University%20Assessment%20Project-blue?style=flat-square)
 
