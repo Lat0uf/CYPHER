@@ -8,6 +8,8 @@ A cipher-breaking browser game where using external decoder tools isn't cheating
 
 </div>
 
+> I had this idea sitting in my head for a while, and a CS uni course with an open-ended "build any website" assessment was a good enough reason to just do it.
+
 ## 🎮 What it is
 
 You get 60 seconds. A cipher appears. You decode it and type the answer. Then another one appears. This continues until the clock hits zero. Wrong answer and it ends immediately.
