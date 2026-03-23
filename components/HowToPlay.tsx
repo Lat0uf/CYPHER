@@ -167,7 +167,7 @@ export default function HowToPlay({ isOpen }: Props) {
                                                 {DIFFICULTIES.map(d => (
                                                     <div key={d.label} style={{ display: 'flex', gap: '0.5rem', alignItems: 'baseline' }}>
                                                         <span style={{ ...body, color: d.color, minWidth: '3.5em', fontWeight: 600 }}>{d.label}</span>
-                                                        <span style={{ ...body, color: 'rgba(180,180,180,0.65)' }}>{d.pts} pts</span>
+                                                        <span style={{ ...body, color: 'rgba(180,180,180,0.65)' }}>{d.pts} points</span>
                                                     </div>
                                                 ))}
                                             </div>
