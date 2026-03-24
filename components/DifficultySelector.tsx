@@ -227,7 +227,7 @@ export default function DifficultySelector({ value, onChange, disabled = false }
                 })}
 
                 {/*
-                  The one sliding card. Always in the DOM — never unmounted.
+                  The one sliding card. Always in the DOM, never unmounted.
                   `left` and `right` both transition simultaneously keeping card
                   width constant while the position moves. GPU-composited so zero
                   layout reflow. The inner div owns backdrop-filter separately from
@@ -245,7 +245,7 @@ export default function DifficultySelector({ value, onChange, disabled = false }
                         border:               BORDER,
                         boxShadow:            selOpt.cardShadow,
                         overflow:             'hidden',
-                        // transform instead of left/right — GPU composited, no blur repaint
+                        // transform instead of left/right, GPU composited, no blur repaint
                         transform:            `translateX(${selIdx * STUB_W}px)`,
                         willChange:           'transform',
                         transition: [
