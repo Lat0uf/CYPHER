@@ -159,7 +159,7 @@ export default function HowToPlay({ isOpen }: Props) {
                                         </div>
                                     </div>
 
-                                    {/* Scoring: base pts left, time bonuses right, vertical divider between */}
+                                    {/* Scoring: base points left, time bonuses right, vertical divider between */}
                                     <div>
                                         <SectionLabel>&gt; SCORING</SectionLabel>
                                         <div style={{ display: 'flex', gap: 0, alignItems: 'stretch' }}>
