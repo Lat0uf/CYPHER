@@ -9,7 +9,7 @@ function caesarShift(word: string, shift: number): string {
     }).join('');
 }
 
-// Rail Fence — zigzag across N rails, N is random and not shown
+// Rail Fence (zigzag across N rails, N is random and not shown)
 export const railFence = (): { cipher: string; answer: string } => {
     const word  = getRandomWord(6, 9);
     const rails = Math.floor(Math.random() * 3) + 2;
@@ -24,14 +24,14 @@ export const railFence = (): { cipher: string; answer: string } => {
     return { cipher: railArrays.map(r => r.join('')).join(''), answer: word };
 };
 
-// Hex ASCII — each letter as its hex ASCII value
+// Hex ASCII (each letter as its hex ASCII value)
 export const hexAscii = (): { cipher: string; answer: string } => {
     const word   = getRandomWord(4, 6);
     const cipher = word.split('').map(c => c.charCodeAt(0).toString(16).toUpperCase()).join(' ');
     return { cipher, answer: word };
 };
 
-// Hex ASCII Multi — two words separated by / for a clear boundary
+// Hex ASCII Multi (two words separated by / for a clear boundary)
 export const hexAsciiMulti = (): { cipher: string; answer: string } => {
     const words  = getRandomWords(2, 4, 5);
     const cipher = words
@@ -40,7 +40,7 @@ export const hexAsciiMulti = (): { cipher: string; answer: string } => {
     return { cipher, answer: words.join(' ') };
 };
 
-// Base32 — encodes bytes into A–Z + 2–7 alphabet
+// Base32 (encodes bytes into A–Z + 2–7 alphabet)
 export const base32Encode = (): { cipher: string; answer: string } => {
     const BASE32 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
     const word   = getRandomWord(4, 6);
@@ -53,14 +53,14 @@ export const base32Encode = (): { cipher: string; answer: string } => {
     return { cipher: result, answer: word };
 };
 
-// Base64 + Caesar — caesar shifted first, then base64 encoded on top
+// Base64 + Caesar (caesar shifted first, then base64 encoded on top)
 export const base64Chain = (): { cipher: string; answer: string } => {
     const word  = getRandomWord(5, 7);
     const shift = Math.floor(Math.random() * 20) + 3;
     return { cipher: btoa(caesarShift(word, shift)), answer: word };
 };
 
-// Binary + Caesar — caesar shifted first, then converted to binary
+// Binary + Caesar (caesar shifted first, then converted to binary)
 export const binaryThenCaesar = (): { cipher: string; answer: string } => {
     const word  = getRandomWord(4, 6);
     const shift = Math.floor(Math.random() * 20) + 3;
@@ -71,16 +71,16 @@ export const binaryThenCaesar = (): { cipher: string; answer: string } => {
     return { cipher, answer: word };
 };
 
-// Morse + Reverse — word reversed first, then encoded as morse
+// Morse + Reverse (word reversed first, then encoded as morse)
 export const morseThenReverse = (): { cipher: string; answer: string } => {
     const word   = getRandomWord(4, 7);
     const cipher = word.split('').reverse().join('').split('').map(c => MORSE_MAP[c] || c).join('  ');
     return { cipher, answer: word };
 };
 
-// Reverse + Caesar — word reversed first, then caesar shifted on top.
+// Reverse + Caesar (word reversed first, then caesar shifted on top)
 // Moved here from Normal: player decodes caesar, gets a backwards word,
-// then has to reverse it — two distinct tool steps.
+// then has to reverse it (two distinct tool steps)
 export const reverseThenCaesar = (): { cipher: string; answer: string } => {
     const word    = getRandomWord(5, 8);
     const shift   = Math.floor(Math.random() * 20) + 3;
