@@ -37,8 +37,8 @@ export default function CipherDisplay({ cipherText, color }: CipherDisplayProps)
                 </div>
             ) : (
                 // line-height: 1.4 keeps unicode symbols (⊥, ∩, Я, etc.) from clipping
-                // against each other — some occupy a different portion of the em box
-                // than standard uppercase Latin.
+                // against each other, some occupy a different portion of the em box
+                // than standard uppercase Latin
                 <p
                     className={`font-mono ${textSize} text-white no-select text-center tracking-wide`}
                     style={{ lineHeight: 1.4 }}
