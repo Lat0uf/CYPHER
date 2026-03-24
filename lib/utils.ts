@@ -1,7 +1,6 @@
-// utils.ts
 // Word and phrase generation + shared helpers for all cipher files
-// Uses random-words package for single words (~5000 words, no static list)
-// Uses procedural template generation for easy mode phrases (huge combo space)
+// Uses random-words package for single words (~5000 words)
+// Uses procedural template generation for easy mode phrases
 
 import randomWords from 'random-words';
 
