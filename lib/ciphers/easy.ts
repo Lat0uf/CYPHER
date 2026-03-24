@@ -1,6 +1,5 @@
-// easy.ts
 // Easy mode: solveable by eye, not by tool. Every puzzle applies three distinct
-// transforms simultaneously — flip, leet, and reverse/scramble. A player needs
+// transforms simultaneously, flip, leet, and reverse/scramble. A player needs
 // three separate mental steps to decode any word, but none of those steps
 // requires anything they can't do in their head once they know the rules.
 //
@@ -22,8 +21,8 @@ const FLIP_MAP: Record<string, string> = {
     'Y': '⅄', 'Z': 'Z',
 };
 
-// Real leet only — visually plausible digit/letter pairs.
-// O→0 removed (indistinguishable in monospace). 8→B not 6→B (8 looks like a stacked B).
+// Real leet only (visually plausible digit/letter pairs).
+// O→0 removed (indistinguishable in monospace). 8->B not 6->B (8 looks like a stacked B).
 const LEET_MAP: Record<string, string> = {
     'A': '4', 'B': '8', 'E': '3', 'G': '9', 'I': '1', 'S': '5', 'T': '7', 'Z': '2',
 };
@@ -61,12 +60,8 @@ const applyLeet = (word: string, rate = 0.80): string => {
     }).join('');
 };
 
-// ── Four cipher types ─────────────────────────────────────────────────────────
-// Each varies the spatial transform but always stacks at least two layers on top.
-// Every type has a distinct decode signature so players develop a consistent strategy.
-
 // REVERSE: reverse each word, then flip + leet the reversed string.
-// Decode: undo leet → undo flip symbols → reverse each word.
+// Decode: undo leet -> undo flip symbols -> reverse each word.
 export const reverse = (): { cipher: string; answer: string } => {
     const phrase = getRandomSentence();
     const cipher = phrase.split(' ')
@@ -77,7 +72,7 @@ export const reverse = (): { cipher: string; answer: string } => {
 
 // FLIP+LEET (upsideDown): no reversal, pure heavy symbol substitution.
 // Both transforms run at 90%+ so words are visually unrecognisable.
-// Decode: undo leet digits → undo flip symbols. Word and letter order intact.
+// Decode: undo leet digits -> undo flip symbols. Word and letter order intact.
 export const upsideDown = (): { cipher: string; answer: string } => {
     const phrase = getRandomSentence();
     const cipher = phrase.split(' ')
@@ -87,9 +82,9 @@ export const upsideDown = (): { cipher: string; answer: string } => {
 };
 
 // LEET+SCRAMBLE: leet first, then scramble the leet'd string within each word.
-// Flip intentionally omitted — scramble + leet is already two independent steps,
+// Flip intentionally omitted  scramble + leet is already two independent steps,
 // adding flip on top of already-scrambled text makes it unreadably noisy.
-// Decode: unscramble the anagram → read leet digits back.
+// Decode: unscramble the anagram -> read leet digits back.
 export const leetspeak = (): { cipher: string; answer: string } => {
     const phrase = getRandomSentence();
     const cipher = phrase.split(' ').map(w => {
@@ -104,7 +99,7 @@ export const leetspeak = (): { cipher: string; answer: string } => {
 };
 
 // UNJUMBLE+FLIP+LEET: scramble each word, then apply flip + leet.
-// Decode: undo leet → undo flip symbols → unscramble the anagram.
+// Decode: undo leet -> undo flip symbols -> unscramble the anagram.
 export const unjumble = (): { cipher: string; answer: string } => {
     const phrase = getRandomSentence();
     const cipher = phrase.split(' ').map(w => {
