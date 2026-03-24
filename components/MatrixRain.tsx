@@ -122,7 +122,7 @@ export default function MatrixRain({
             const trail: number[] = [];
             for (let i = 0; i < TRAIL_LENGTH + 2; i++) trail.push(Math.floor(Math.random() * CHARS.length));
             // Distribute y across the full cycle: above-screen queue + full virtual space.
-            // Original (0..totalH) put 33% visible at load but ~29% at steady state —
+            // Original (0..totalH) put 33% visible at load but ~29% at steady state
             // that 4% mismatch was the burst. Including the avg queue depth (4 rows for
             // the random*-8 reset) in the init range makes load density match steady state.
             const cycleRows = TRAIL_LENGTH + 4 + Math.ceil(getTotalH() / FONT_SIZE);
@@ -155,7 +155,7 @@ export default function MatrixRain({
         const onMouseMove = (e: MouseEvent) => { mouseRef.current.x = e.clientX; mouseRef.current.y = e.clientY; };
         window.addEventListener('mousemove', onMouseMove);
 
-        // ── Core draw ─────────────────────────────────────────────────────────────
+        // Core draw
         // dt=0 freezes positions; dt>0 advances them. targetCtx lets static mode
         // draw to an off-screen context without touching the main canvas mid-crossfade.
         const drawFrame = (
@@ -271,7 +271,7 @@ export default function MatrixRain({
             }
         };
 
-        // ── Mode management ──────────────────────────────────────────────────────
+        // Mode management
         let animId: number | null                              = null;
         let snapshotTimer: ReturnType<typeof setTimeout> | null = null;
         let lastFrame                                          = performance.now();
@@ -386,7 +386,7 @@ export default function MatrixRain({
             // doCrossfade: simulate forward, draw into offNxt, run the rAF dissolve.
             // Called both on the 3-5s timer and immediately on navigation.
             const doCrossfade = () => {
-                // Cancel any in-flight fade — a nav event takes priority
+                // Cancel any in-flight fade, a nav event takes priority
                 if (animId !== null) { cancelAnimationFrame(animId); animId = null; }
                 syncOffs();
                 snapOffsets();
@@ -471,9 +471,9 @@ export default function MatrixRain({
             window.removeEventListener('mousemove', onMouseMove);
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); // mount-only — all props consumed via refs
+    }, []); // mount-only, all props consumed via refs
 
-    // CSS 3D tilt — rotates the canvas plane in 3D space based on mouse position.
+    // CSS 3D tilt - rotates the canvas plane in 3D space based on mouse position.
     // Lerps back to zero when reduced motion is on rather than snapping, so the
     // toggle itself doesn't jolt. Runs its own rAF loop, never touches draw logic.
     // scale(1.08) keeps edges filled when the plane rotates.
