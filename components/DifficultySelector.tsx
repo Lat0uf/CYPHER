@@ -126,8 +126,8 @@ export default function DifficultySelector({ value, onChange, disabled = false }
               (invisible, pointer-events:none) for the selected slot. The ghost has
               the exact same padding and content as the card so it naturally gives
               the container the right height. The actual card lives outside the flex
-              flow as an absolutely-positioned element — this is what slides without
-              touching any other DOM element.
+              flow as an absolutely-positioned element, this is what slides without
+              touching any other DOM element
             */}
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
 
@@ -140,10 +140,10 @@ export default function DifficultySelector({ value, onChange, disabled = false }
 
                     if (sel) {
                         // Ghost matches the stub appearance exactly so there is no
-                        // visual change when React swaps stub -> ghost on selection.
-                        // Full OUTER_R on all corners so nothing pokes behind card corners.
-                        // Same backdropFilter as stubs — card inner div has NO backdropFilter
-                        // so there is only ever one blur layer at any pixel (no ghosting).
+                        // visual change when React swaps stub -> ghost on selection
+                        // Full OUTER_R on all corners so nothing pokes behind card corners
+                        // Same backdropFilter as stubs, card inner div has NO backdropFilter
+                        // so there is only ever one blur layer at any pixel (no ghosting)
                         return (
                             <div
                                 key={opt.value}
@@ -231,7 +231,7 @@ export default function DifficultySelector({ value, onChange, disabled = false }
                   `left` and `right` both transition simultaneously keeping card
                   width constant while the position moves. GPU-composited so zero
                   layout reflow. The inner div owns backdrop-filter separately from
-                  the outer shadow to prevent Chromium banding artifacts.
+                  the outer shadow to prevent Chromium banding artifacts
                 */}
                 <div
                     style={{
