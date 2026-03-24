@@ -51,7 +51,7 @@ export default function MatrixRain({
     useEffect(() => { htpOpenRef.current       = htpOpen;       }, [htpOpen]);
 
     // Single mount-only effect. Columns are allocated once and reused across
-    // live and static modes so toggling never resets visual state.
+    // live and static modes so toggling never resets visual state
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -121,10 +121,10 @@ export default function MatrixRain({
         const makeColumn = (): Column => {
             const trail: number[] = [];
             for (let i = 0; i < TRAIL_LENGTH + 2; i++) trail.push(Math.floor(Math.random() * CHARS.length));
-            // Distribute y across the full cycle: above-screen queue + full virtual space.
+            // Distribute y across the full cycle: above-screen queue + full virtual space
             // Original (0..totalH) put 33% visible at load but ~29% at steady state
             // that 4% mismatch was the burst. Including the avg queue depth (4 rows for
-            // the random*-8 reset) in the init range makes load density match steady state.
+            // the random*-8 reset) in the init range makes load density match steady state
             const cycleRows = TRAIL_LENGTH + 4 + Math.ceil(getTotalH() / FONT_SIZE);
             return {
                 y:     -(TRAIL_LENGTH + 4) + Math.random() * cycleRows,
@@ -157,7 +157,7 @@ export default function MatrixRain({
 
         // Core draw
         // dt=0 freezes positions; dt>0 advances them. targetCtx lets static mode
-        // draw to an off-screen context without touching the main canvas mid-crossfade.
+        // draw to an off-screen context without touching the main canvas mid-crossfade
         const drawFrame = (
             targetCtx: CanvasRenderingContext2D,
             dt: number,
@@ -217,7 +217,7 @@ export default function MatrixRain({
                         const eggBot = eggTop + egg.text.length * FONT_SIZE;
                         if (virtualPy >= eggTop && virtualPy < eggBot) {
                             // Limit visible egg characters to a short trail window so the
-                            // message reveals letter by letter rather than all at once.
+                            // message reveals letter by letter rather than all at once
                             if (t >= 4) continue;
                             const ci = Math.floor((virtualPy - eggTop) / FONT_SIZE);
                             if (ci >= 0 && ci < egg.text.length) {
@@ -308,7 +308,7 @@ export default function MatrixRain({
         // Step-by-step simulation (not a big y-jump) is what produces genuine
         // visual continuity: positions advance at natural speed, columns that
         // wrap get fresh chars exactly as the live loop does, so the snapshot
-        // looks like the same rain caught a moment later.
+        // looks like the same rain caught a moment later
         const simulateForward = () => {
             const totalH  = getTotalH();
             const spdMul  = getSpeedMul() * speedRef.current;
@@ -330,10 +330,10 @@ export default function MatrixRain({
 
             const dpr = window.devicePixelRatio || 1;
 
-            // Two offscreen canvases swap roles each cycle.
-            // offCur: the frame currently shown on screen (outgoing).
-            // offNxt: the next frame being faded in (incoming).
-            // Both use alpha:false (opaque) matching the main canvas.
+            // Two offscreen canvases swap roles each cycle
+            // offCur: the frame currently shown on screen (outgoing)
+            // offNxt: the next frame being faded in (incoming)
+            // Both use alpha:false (opaque) matching the main canvas
             const makeOff = () => {
                 const el  = document.createElement('canvas');
                 el.width  = canvas.width;
