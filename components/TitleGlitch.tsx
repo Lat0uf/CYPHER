@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 
-// Tab title glitch: one letter glitches, reverts to plain CYPHER, then waits.
-// Variant weighting deprioritizes recently used chars so repeats are rare.
+// Tab title glitch: one letter glitches, reverts to plain CYPHER, then waits
+// Variant weighting deprioritizes recently used chars so repeats are rare
 export default function TitleGlitch() {
     const levelRef = useRef<number | null>(null);
 
@@ -41,7 +41,7 @@ export default function TitleGlitch() {
             return idx;
         };
 
-        // pick variant with weighted randomness — recent ones get much lower weight
+        // pick variant with weighted randomness (recent ones get much lower weight)
         const pickVariant = (letter: string): string => {
             const alts = glitchMap[letter];
             const recent = recentVariants[letter] || [];
