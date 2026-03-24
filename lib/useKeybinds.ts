@@ -54,7 +54,7 @@ export function useKeybinds(config: KeybindConfig) {
                 }
             }
 
-            // Connection Lost (page 2) — ESC handled above
+            // Connection Lost (page 2), ESC handled above
             if (activePage === 2) {
                 if (key === 'r' || key === 'R') { e.preventDefault(); onTryAgain(); return; }
             }
