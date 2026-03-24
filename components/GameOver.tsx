@@ -26,7 +26,7 @@ export default function GameOver({
             className="w-full flex flex-col items-center gap-6 max-w-xl mx-auto px-4"
             style={{ animation: 'fadeIn 0.5s ease-out' }}
         >
-            {/* Title — slow red glow pulse */}
+            {/* Title - slow red glow pulse */}
             <div
                 className="text-center"
                 style={{ animation: 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both' }}
@@ -99,7 +99,7 @@ export default function GameOver({
                 ))}
             </div>
 
-            {/* Action buttons — muted frosted glass, clearly interactive */}
+            {/* Action buttons - muted frosted glass, clearly interactive */}
             <div
                 className="flex gap-3 w-full"
                 style={{ animation: 'statFadeIn 0.4s ease-out 0.45s both' }}
