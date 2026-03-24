@@ -63,7 +63,7 @@ export default function SettingsToggle({
         transition-colors duration-200`.trim();
 
     return (
-        // No outer padding — pill sizing comes entirely from inner button padding.
+        // No outer padding (pill sizing comes entirely from inner button padding).
         <div className={`fixed bottom-6 right-6 z-50 glass flex items-center gap-1 settings-pill ${isPlaying ? 'hidden-pill' : ''}`}>
             <button onClick={toggleTheme} className={btnClass}
                 aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
