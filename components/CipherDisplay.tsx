@@ -36,7 +36,7 @@ export default function CipherDisplay({ cipherText, color }: CipherDisplayProps)
                     </p>
                 </div>
             ) : (
-                // line-height: 1.4 keeps unicode symbols (⊥, ∩, Я, etc.) from clipping
+                // line-height: 1.4 keeps unicode symbols (⊥, ∩, Я, etc) from clipping
                 // against each other, some occupy a different portion of the em box
                 // than standard uppercase Latin
                 <p
