@@ -312,7 +312,7 @@ export default function HeroSection({
                         BEST SCORE: {displayedScore}
                     </p>
 
-                    {/* Absolutely positioned — no layout impact on score centering */}
+                    {/* Absolutely positioned (no layout impact on score centering) */}
                     <button
                         onClick={handleReset}
                         className="font-mono text-xs"
