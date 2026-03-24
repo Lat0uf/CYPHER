@@ -40,7 +40,6 @@ export const getRandomWords = (count: number, minLen = 4, maxLen = 7): string[] 
 };
 
 // Word banks for procedural phrase generation
-// Mixed topics on purpose - not just hacking, keeps it unpredictable
 const VERBS = [
     'BURN', 'CRACK', 'CHASE', 'BREAK', 'FIND', 'HIDE', 'HUNT',
     'LIFT', 'LOSE', 'MISS', 'PUSH', 'PULL', 'READ', 'RISE',
@@ -79,7 +78,7 @@ function pick<T>(arr: T[]): T {
 }
 
 // Templates produce tens of thousands of unique combos procedurally
-// Mix of 2, 3, and 4 word phrases - no filler words starting a phrase
+// Mix of 2, 3, and 4 word phrases
 const TEMPLATES: Array<() => string> = [
     () => `${pick(VERBS)} ${pick(NOUNS)}`,
     () => `${pick(VERBS)} ${pick(ADJECTIVES)} ${pick(NOUNS)}`,
