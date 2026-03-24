@@ -48,7 +48,7 @@ export default function HeroSection({
     const [isLightMode, setIsLightMode]       = useState(false);
     const [bestScore, setBestScore]           = useState<number | null>(null);
     // displayedScore holds the last known non-null value so the row shows a
-    // real number during fade-out instead of blanking to "BEST SCORE: " midway.
+    // real number during fade-out instead of blanking to "BEST SCORE: " midway
     const [displayedScore, setDisplayedScore] = useState<number | null>(null);
     const [subtitleDisplay, setSubtitleDisplay] = useState('');
     const [showCursor, setShowCursor]         = useState(true);
@@ -68,7 +68,7 @@ export default function HeroSection({
         return () => window.removeEventListener('cypher-scores-reset', onReset);
     }, [difficulty]);
 
-    // Re-read after a game ends. setBest runs before this event fires inside GameArea.
+    // Re-read after a game ends. setBest runs before this event fires inside GameArea
     useEffect(() => {
         const onGameEnd = () => {
             const score = getBest(difficulty);
@@ -275,12 +275,12 @@ export default function HeroSection({
             </button>
 
             {/*
-              Height always reserved so the button above never shifts.
+              Height always reserved so the button above never shifts
               Grace-period timer pattern: mouseLeave on the score text starts a
               150ms countdown to hide Reset?. mouseEnter on Reset? cancels it before
               it fires. This gives the cursor time to travel between two elements
-              that are not in the same layout box without the button vanishing.
-              Reset? is absolutely positioned so it never affects the score centering.
+              that are not in the same layout box without the button vanishing
+              Reset? is absolutely positioned so it never affects the score centering
             */}
             <div style={{ height: '1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '0.75rem' }}>
                 <div
