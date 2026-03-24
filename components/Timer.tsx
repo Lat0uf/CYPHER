@@ -32,7 +32,7 @@ function getTimerColor(pct: number): string {
     return 'rgb(200, 20, 20)';
 }
 
-// isActive kept in props for future use.
+// isActive kept in props for future use
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Timer({ timeRemaining, difficulty, isActive }: TimerProps) {
     const percentage = getTimerPercentage(timeRemaining, difficulty);
@@ -59,10 +59,10 @@ export default function Timer({ timeRemaining, difficulty, isActive }: TimerProp
                 </span>
             </div>
 
-            {/* Track: rounded-full clips the bar's left end cleanly.
-                The bar has its own rounded right end via border-radius.
+            {/* Track: rounded-full clips the bar's left end cleanly
+                The bar has its own rounded right end via border-radius
                 With the width approach (not scaleX), border-radius renders correctly
-                at all fill levels and never conflicts with the width transition. */}
+                at all fill levels and never conflicts with the width transition */}
             <div
                 className="h-3 rounded-full overflow-hidden"
                 style={{ background: 'rgba(255,255,255,0.08)' }}
