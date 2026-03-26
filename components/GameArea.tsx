@@ -19,6 +19,7 @@ interface GameAreaProps {
     onChangeDifficulty: () => void;
     reducedMotion?: boolean;
     activePage?: number;
+    obscureCipher?: boolean;
 }
 
 export default function GameArea({
@@ -30,6 +31,7 @@ export default function GameArea({
     onChangeDifficulty,
     reducedMotion = false,
     activePage = 1,
+    obscureCipher = false,
 }: GameAreaProps) {
     const [gameState, setGameState] = useState<GameState>({
         difficulty,
@@ -193,6 +195,8 @@ export default function GameArea({
                 stopTimerTick();
                 playWrong();
                 setFeedback('wrong');
+                // Stop the timer interval immediately — no need to keep ticking through the vignette window
+                setGameState(prev => ({ ...prev, isPlaying: false }));
                 wrongAnswerTimerRef.current = setTimeout(() => {
                     setGameState(prev => ({ ...prev, gameOver: true }));
                 }, 1200);
@@ -282,7 +286,7 @@ export default function GameArea({
                     </div>
 
                     <div className="mb-6 w-full">
-                        {gameState.currentCipher ? (
+                        {gameState.currentCipher && !obscureCipher ? (
                             <CipherDisplay
                                 cipherText={gameState.currentCipher}
                                 cipherType={gameState.cipherType || undefined}

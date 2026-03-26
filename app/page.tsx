@@ -22,6 +22,7 @@ export default function Home() {
     const [page, setPage]         = useState(0);
     const [gameKey, setGameKey]   = useState(0);
     const [showGame, setShowGame] = useState(false);
+    const [obscureCipher, setObscureCipher] = useState(false);
 
     const gameOverAllowedRef = useRef(false);
     const sessionIdRef       = useRef(0);
@@ -39,13 +40,21 @@ export default function Home() {
         const next = sessionIdRef.current + 1;
         sessionIdRef.current       = next;
         gameOverAllowedRef.current = true;
-        // All three state updates batch in the same React 18 render, so GameArea
-        // mounts exactly once with the correct key. No delayed key change means no
-        // second loadCipher call and no cipher flash during the slide.
-        setGameKey(next);
-        setShowGame(true);
-        setPage(1);
-    }, []);
+        if (page === 2) {
+            // Blank the cipher immediately so the old question isn't visible during the slide
+            setObscureCipher(true);
+            setPage(1);
+            keyTimerRef.current = setTimeout(() => {
+                setGameKey(next);
+                setObscureCipher(false);
+            }, TRANSITION_MS);
+        } else {
+            // From hero: batch all three so GameArea mounts once with the right key
+            setGameKey(next);
+            setShowGame(true);
+            setPage(1);
+        }
+    }, [page]);
 
     const handleGameOver = useCallback((fromSession: number) => {
         if (!gameOverAllowedRef.current) return;
@@ -159,6 +168,7 @@ export default function Home() {
                                     onChangeDifficulty={goToHero}
                                     reducedMotion={reducedMotion}
                                     activePage={page}
+                                    obscureCipher={obscureCipher}
                                 />
                             )}
                         </div>
