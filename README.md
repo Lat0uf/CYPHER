@@ -36,9 +36,13 @@ You have to manually type it into your decoder. Recommended tools: [CyberChef](h
 
 ## 🔮 The experience
 
-The matrix rain background shifts color with difficulty: blue on Easy, neutral on Normal, red on Hard. Every page transition, score popup, timer pulse, and feedback flash is animated to feel cohesive rather than bolted on. If motion isn't your thing, there's an accessibility toggle that cuts all animations globally.
+The matrix rain background shifts color with difficulty: blue on Easy, neutral on Normal, red on Hard. Every page transition, score popup, timer pulse, and feedback flash is animated to feel cohesive rather than bolted on. The rain also reacts to your mouse, a subtle parallax that adds depth without being distracting. 
+
+Occasionally a rare phrase surfaces as a white column in the rain, there are over 10 of them with weighted rarity so repeats stay rare. If motion isn't your thing, there's an accessibility toggle that cuts all animations globally.
 
 Light mode exists too (who even uses light mode though).
+
+<sub><i>The title might also be worth clicking on. Just saying.</i></sub>
 
 ## ⌨️ Keybinds
 
