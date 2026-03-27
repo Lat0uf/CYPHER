@@ -64,6 +64,7 @@ Light mode exists too (who even uses light mode though).
 - **TypeScript:** makes the codebase easier to navigate and harder to accidentally break
 - **Tailwind CSS:** styling stays in the component without writing a single custom CSS class
 - **Canvas API:** hardware-accelerated matrix rain background
+- **Web Audio API:** all sound effects are synthesized in code, no audio files or libraries involved
 - **Web Crypto API:** answers are SHA-256 hashed server-side and the plaintext never leaves the server
 - **Bun:** runtime and package manager
 - **Vercel:** deployment
