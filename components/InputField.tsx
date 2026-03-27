@@ -37,10 +37,8 @@ export default function InputField({
 
     const feedbackClass = (() => {
         if (!feedbackState) return '';
-        if (reducedMotion) {
-            return feedbackState === 'wrong' ? 'input-feedback-wrong' : 'input-feedback-correct';
-        }
-        return feedbackState === 'wrong' ? 'input-flash-wrong' : 'input-flash-correct';
+        if (feedbackState === 'wrong') return 'input-feedback-wrong';
+        return reducedMotion ? 'input-feedback-correct' : 'input-flash-correct';
     })();
 
     return (
@@ -53,6 +51,7 @@ export default function InputField({
                 disabled={disabled}
                 placeholder={placeholder}
                 autoComplete="off"
+                style={{ transition: 'border-color 0.35s ease, box-shadow 0.35s ease, opacity 0.4s ease' }}
                 className={`
                     flex-1 glass px-6 py-4
                     font-mono text-xl text-white light-adapt

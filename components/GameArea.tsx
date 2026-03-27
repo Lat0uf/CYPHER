@@ -197,6 +197,8 @@ export default function GameArea({
                 setFeedback('wrong');
                 // Stop the timer interval immediately — no need to keep ticking through the vignette window
                 setGameState(prev => ({ ...prev, isPlaying: false }));
+                // Clear feedback at the same time as game over fires so border fades out cleanly
+                feedbackTimerRef.current    = setTimeout(() => setFeedback(null), 1200);
                 wrongAnswerTimerRef.current = setTimeout(() => {
                     setGameState(prev => ({ ...prev, gameOver: true }));
                 }, 1200);
@@ -222,6 +224,11 @@ export default function GameArea({
     return (
         <div style={{ position: 'absolute', inset: 0 }}>
 
+            {/* Fixed so the radial gradient centers on the actual viewport, not the 200vh container */}
+            {feedback && !reducedMotion && (
+                <div className={`fixed inset-0 pointer-events-none z-40 ${feedbackClass}`} />
+            )}
+
             {/* Page 1: game */}
             <section
                 style={{
@@ -234,12 +241,9 @@ export default function GameArea({
                 aria-hidden={gamePageHidden}
             >
                 <div
-                    className="relative z-10 w-full max-w-4xl flex flex-col items-center"
+                    className={`relative z-10 w-full max-w-4xl flex flex-col items-center ${feedback === 'wrong' && !reducedMotion ? 'wrong-shake' : ''}`}
                     style={{ pointerEvents: gamePageHidden ? 'none' : 'auto' }}
                 >
-                    {feedback && (
-                        <div className={`fixed inset-0 pointer-events-none z-40 ${feedbackClass}`} />
-                    )}
 
                     <div className="w-full flex justify-between items-center mb-6">
                         <p className="font-mono text-sm text-matrix-200 uppercase tracking-widest">
