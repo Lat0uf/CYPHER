@@ -10,6 +10,8 @@ import { TIMER_DURATIONS } from '@/lib/gameState';
 import { playCorrect, playWrong, playGameOver, playClick, startTimerTick, stopTimerTick } from '@/lib/useSound';
 import { getBest, setBest, isNewBest as checkIsNewBest } from '@/lib/useHighScore';
 
+import type { PrefetchedCipher } from '@/app/page';
+
 interface GameAreaProps {
     sessionId: number;
     difficulty: Difficulty;
@@ -20,6 +22,8 @@ interface GameAreaProps {
     reducedMotion?: boolean;
     activePage?: number;
     obscureCipher?: boolean;
+    prefetchedCipherRef?: React.MutableRefObject<Promise<PrefetchedCipher | null>>;
+    resolvedCipherRef?: React.MutableRefObject<PrefetchedCipher | null>;
 }
 
 export default function GameArea({
@@ -32,25 +36,29 @@ export default function GameArea({
     reducedMotion = false,
     activePage = 1,
     obscureCipher = false,
+    prefetchedCipherRef,
+    resolvedCipherRef,
 }: GameAreaProps) {
+    // Read synchronously so the very first render already has cipher data
+    const ic = resolvedCipherRef?.current ?? null;
     const [gameState, setGameState] = useState<GameState>({
         difficulty,
         level: 1,
         score: 0,
         isPlaying: true,
         timeRemaining: TIMER_DURATIONS[difficulty],
-        currentCipher: null,
-        cipherType: null,
-        hashedAnswer: null,
-        altHashedAnswers: [],
+        currentCipher:    ic?.cipherText    ?? null,
+        cipherType:       ic?.cipherType    ?? null,
+        hashedAnswer:     ic?.hashedAnswer  ?? null,
+        altHashedAnswers: ic?.altHashedAnswers ?? [],
         gameOver: false,
     });
 
-    const [cipherColor, setCipherColor]       = useState<string | undefined>();
+    const [cipherColor, setCipherColor]       = useState<string | undefined>(ic?.color);
     const [feedback, setFeedback]             = useState<'correct' | 'wrong' | null>(null);
     const [startTime]                         = useState(Date.now());
     const [isLoading, setIsLoading]           = useState(false);
-    const [correctAnswer, setCorrectAnswer]   = useState('');
+    const [correctAnswer, setCorrectAnswer]   = useState(ic?.correctAnswer ?? '');
     const [showScorePopup, setShowScorePopup] = useState(false);
     const [isNewBest, setIsNewBest]           = useState(false);
     const [previousBest, setPreviousBest]     = useState<number | null>(null);
@@ -100,9 +108,21 @@ export default function GameArea({
 
         window.dispatchEvent(new CustomEvent('cypher-game-end'));
         onGameOverRef.current(sessionId);
-        setTimeout(() => playGameOver(), 350);
+        playGameOver();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gameState.gameOver]);
+
+    const applyCipherData = useCallback((data: PrefetchedCipher) => {
+        setGameState(prev => ({
+            ...prev,
+            currentCipher:    data.cipherText,
+            cipherType:       data.cipherType,
+            hashedAnswer:     data.hashedAnswer,
+            altHashedAnswers: data.altHashedAnswers || [],
+        }));
+        setCorrectAnswer(data.correctAnswer || '');
+        setCipherColor(data.color || undefined);
+    }, []);
 
     const loadCipher = useCallback(async () => {
         try {
@@ -114,25 +134,32 @@ export default function GameArea({
             });
             if (!resp.ok) throw new Error('Failed to generate cipher');
             const data = await resp.json();
-            setGameState(prev => ({
-                ...prev,
-                currentCipher:    data.cipherText,
-                cipherType:       data.cipherType,
-                hashedAnswer:     data.hashedAnswer,
-                altHashedAnswers: data.altHashedAnswers || [],
-            }));
-            setCorrectAnswer(data.correctAnswer || '');
-            setCipherColor(data.color || undefined);
+            applyCipherData(data);
         } catch (err) {
             console.error('Cipher load failed:', err);
         } finally {
             setIsLoading(false);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [difficulty, gameState.level]);
+    }, [difficulty, gameState.level, applyCipherData]);
 
     useEffect(() => {
-        loadCipher();
+        // resolvedCipherRef already seeded state synchronously — nothing to fetch
+        if (resolvedCipherRef?.current) {
+            resolvedCipherRef.current = null; // consume it so the next game doesn't reuse it
+            return;
+        }
+        // Use the prefetched cipher promise if available, fall back to a fresh fetch
+        const prefetchProm = prefetchedCipherRef?.current ?? Promise.resolve(null);
+        setIsLoading(true);
+        prefetchProm.then(data => {
+            if (data) {
+                applyCipherData(data);
+                setIsLoading(false);
+            } else {
+                loadCipher();
+            }
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -145,8 +172,8 @@ export default function GameArea({
             setGameState(prev => {
                 if (prev.gameOver) return prev;
                 const newTime = Math.max(0, prev.timeRemaining - elapsed);
-                if (newTime <= 15000 && newTime > 0) startTimerTick();
-                else if (newTime > 15000)            stopTimerTick();
+                if (newTime <= 10000 && newTime > 0) startTimerTick();
+                else if (newTime > 10000)            stopTimerTick();
                 if (newTime === 0) {
                     stopTimerTick();
                     return { ...prev, timeRemaining: 0, gameOver: true };
@@ -190,7 +217,7 @@ export default function GameArea({
                     timeRemaining: TIMER_DURATIONS[difficulty],
                 }));
                 lastTickRef.current    = Date.now();
-                cipherTimerRef.current = setTimeout(() => loadCipher(), 500);
+                cipherTimerRef.current = setTimeout(() => loadCipher(), 50);
             } else {
                 stopTimerTick();
                 playWrong();

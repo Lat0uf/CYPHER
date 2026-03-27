@@ -36,7 +36,7 @@ function getTimerColor(pct: number): string {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Timer({ timeRemaining, difficulty, isActive }: TimerProps) {
     const percentage = getTimerPercentage(timeRemaining, difficulty);
-    const isCritical = percentage < 16;
+    const isCritical = timeRemaining <= 10000 && timeRemaining > 0;
     const color      = getTimerColor(percentage);
 
     return (
@@ -72,10 +72,10 @@ export default function Timer({ timeRemaining, difficulty, isActive }: TimerProp
                         height: '100%',
                         width: `${percentage}%`,
                         backgroundColor: color,
-                        borderRadius: '0 3px 3px 0',
+                        borderRadius: '0 999px 999px 0',
                         boxShadow: `0 0 10px ${color.replace('rgb', 'rgba').replace(')', ', 0.45)')}`,
                         transition: 'width 0.12s linear, background-color 0.3s ease, box-shadow 0.3s ease',
-                        animation: isCritical ? 'timerBlink 1s ease-in-out infinite' : 'none',
+                        animation: isCritical ? 'timerBlink 1s ease-in-out -0.5s infinite' : 'none',
                     }}
                 />
             </div>

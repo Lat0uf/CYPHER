@@ -12,6 +12,16 @@ import { playDifficultyChange, playAccessibilityTick } from '@/lib/useSound';
 
 const TRANSITION_MS = 850;
 
+// Shape returned by /api/generate-cipher, mirrored here for the prefetch ref type
+export interface PrefetchedCipher {
+    cipherText: string;
+    cipherType: string;
+    hashedAnswer: string;
+    altHashedAnswers: string[];
+    correctAnswer: string;
+    color?: string;
+}
+
 export default function Home() {
     const [difficulty, setDifficulty]       = useState<Difficulty>('normal');
     const [reducedMotion, setReducedMotion] = useState(false);
@@ -22,17 +32,28 @@ export default function Home() {
     const [page, setPage]         = useState(0);
     const [gameKey, setGameKey]   = useState(0);
     const [showGame, setShowGame] = useState(false);
-    const [obscureCipher, setObscureCipher] = useState(false);
+    const [obscureCipher, setObscureCipher]   = useState(false);
+    const [initialCipher, setInitialCipher]   = useState<PrefetchedCipher | null>(null);
 
-    const gameOverAllowedRef = useRef(false);
-    const sessionIdRef       = useRef(0);
-    const unmountTimerRef    = useRef<ReturnType<typeof setTimeout>>();
-    const keyTimerRef        = useRef<ReturnType<typeof setTimeout>>();
-    const toggleThemeRef     = useRef<() => void>(() => {});
-    const toggleMotionRef    = useRef<() => void>(() => {});
-    const lastDiffChangeRef  = useRef(0);
+    const gameOverAllowedRef    = useRef(false);
+    const sessionIdRef          = useRef(0);
+    const unmountTimerRef       = useRef<ReturnType<typeof setTimeout>>();
+    const keyTimerRef           = useRef<ReturnType<typeof setTimeout>>();
+    const toggleThemeRef        = useRef<() => void>(() => {});
+    const toggleMotionRef       = useRef<() => void>(() => {});
+    const lastDiffChangeRef     = useRef(0);
+    // Holds the in-flight prefetch promise so GameArea can await it on mount
+    const prefetchedCipherRef   = useRef<Promise<PrefetchedCipher | null>>(Promise.resolve(null));
 
     const matrixSpeed = difficulty === 'easy' ? 0.7 : difficulty === 'hard' ? 1.15 : 0.9;
+
+    const prefetchCipher = useCallback((diff: Difficulty) => {
+        prefetchedCipherRef.current = fetch('/api/generate-cipher', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ difficulty: diff, level: 1 }),
+        }).then(r => r.ok ? r.json() : null).catch(() => null);
+    }, []);
 
     const startNewGame = useCallback(() => {
         clearTimeout(unmountTimerRef.current);
@@ -40,21 +61,23 @@ export default function Home() {
         const next = sessionIdRef.current + 1;
         sessionIdRef.current       = next;
         gameOverAllowedRef.current = true;
+        prefetchCipher(difficulty);
         if (page === 2) {
-            // Blank the cipher immediately so the old question isn't visible during the slide
             setObscureCipher(true);
             setPage(1);
-            keyTimerRef.current = setTimeout(() => {
+            // Await the prefetch so GameArea gets the cipher synchronously on first render
+            keyTimerRef.current = setTimeout(async () => {
+                const data = await prefetchedCipherRef.current;
+                setInitialCipher(data);
                 setGameKey(next);
                 setObscureCipher(false);
             }, TRANSITION_MS);
         } else {
-            // From hero: batch all three so GameArea mounts once with the right key
             setGameKey(next);
             setShowGame(true);
             setPage(1);
         }
-    }, [page]);
+    }, [page, difficulty, prefetchCipher]);
 
     const handleGameOver = useCallback((fromSession: number) => {
         if (!gameOverAllowedRef.current) return;
@@ -169,6 +192,8 @@ export default function Home() {
                                     reducedMotion={reducedMotion}
                                     activePage={page}
                                     obscureCipher={obscureCipher}
+                                    prefetchedCipherRef={prefetchedCipherRef}
+                                    initialCipher={initialCipher}
                                 />
                             )}
                         </div>
