@@ -23,7 +23,7 @@ interface GameAreaProps {
     activePage?: number;
     obscureCipher?: boolean;
     prefetchedCipherRef?: React.MutableRefObject<Promise<PrefetchedCipher | null>>;
-    resolvedCipherRef?: React.MutableRefObject<PrefetchedCipher | null>;
+    pendingCipher?: PrefetchedCipher | null;
 }
 
 export default function GameArea({
@@ -37,28 +37,26 @@ export default function GameArea({
     activePage = 1,
     obscureCipher = false,
     prefetchedCipherRef,
-    resolvedCipherRef,
+    pendingCipher = null,
 }: GameAreaProps) {
-    // Read synchronously so the very first render already has cipher data
-    const ic = resolvedCipherRef?.current ?? null;
     const [gameState, setGameState] = useState<GameState>({
         difficulty,
         level: 1,
         score: 0,
         isPlaying: true,
         timeRemaining: TIMER_DURATIONS[difficulty],
-        currentCipher:    ic?.cipherText    ?? null,
-        cipherType:       ic?.cipherType    ?? null,
-        hashedAnswer:     ic?.hashedAnswer  ?? null,
-        altHashedAnswers: ic?.altHashedAnswers ?? [],
+        currentCipher:    pendingCipher?.cipherText    ?? null,
+        cipherType:       pendingCipher?.cipherType    ?? null,
+        hashedAnswer:     pendingCipher?.hashedAnswer  ?? null,
+        altHashedAnswers: pendingCipher?.altHashedAnswers ?? [],
         gameOver: false,
     });
 
-    const [cipherColor, setCipherColor]       = useState<string | undefined>(ic?.color);
+    const [cipherColor, setCipherColor]       = useState<string | undefined>(pendingCipher?.color);
     const [feedback, setFeedback]             = useState<'correct' | 'wrong' | null>(null);
     const [startTime]                         = useState(Date.now());
     const [isLoading, setIsLoading]           = useState(false);
-    const [correctAnswer, setCorrectAnswer]   = useState(ic?.correctAnswer ?? '');
+    const [correctAnswer, setCorrectAnswer]   = useState(pendingCipher?.correctAnswer ?? '');
     const [showScorePopup, setShowScorePopup] = useState(false);
     const [isNewBest, setIsNewBest]           = useState(false);
     const [previousBest, setPreviousBest]     = useState<number | null>(null);
@@ -144,11 +142,8 @@ export default function GameArea({
     }, [difficulty, gameState.level, applyCipherData]);
 
     useEffect(() => {
-        // resolvedCipherRef already seeded state synchronously — nothing to fetch
-        if (resolvedCipherRef?.current) {
-            resolvedCipherRef.current = null; // consume it so the next game doesn't reuse it
-            return;
-        }
+        // pendingCipher already seeded state as a React prop — nothing to fetch
+        if (pendingCipher) return;
         // Use the prefetched cipher promise if available, fall back to a fresh fetch
         const prefetchProm = prefetchedCipherRef?.current ?? Promise.resolve(null);
         setIsLoading(true);

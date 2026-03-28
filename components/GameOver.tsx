@@ -99,55 +99,63 @@ export default function GameOver({
                 ))}
             </div>
 
-            {/* Action buttons - muted frosted glass, clearly interactive */}
+            {/* Action buttons — mt-3 adds extra breathing room vs the stat cards above */}
             <div
-                className="flex gap-3 w-full"
+                className="flex gap-3 w-full mt-3"
                 style={{ animation: 'statFadeIn 0.4s ease-out 0.45s both' }}
             >
+                {/* Try Again — green accent signals primary action, shimmer on hover */}
                 <button
                     onClick={() => { playClick(); onPlayAgain(); }}
-                    className="btn-press flex-1 py-4 font-display font-semibold text-white text-base tracking-wider"
+                    className="btn-press flex-1 py-4 font-display font-semibold text-white text-base tracking-widest relative overflow-hidden group"
                     style={{
                         borderRadius: '1.25rem',
-                        background: 'rgba(60, 120, 80, 0.12)',
-                        border: '1px solid rgba(80, 160, 100, 0.18)',
+                        background: 'rgba(74, 222, 128, 0.10)',
+                        border: '1px solid rgba(74, 222, 128, 0.42)',
                         backdropFilter: 'blur(20px) saturate(1.4)',
                         WebkitBackdropFilter: 'blur(20px) saturate(1.4)',
+                        boxShadow: '0 0 16px rgba(74, 222, 128, 0.08)',
+                        textShadow: '0 0 10px rgba(74, 222, 128, 0.22)',
                         transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
                     }}
                     onMouseEnter={e => {
-                        e.currentTarget.style.borderColor = 'rgba(80, 160, 100, 0.35)';
-                        e.currentTarget.style.boxShadow = '0 0 16px rgba(80, 160, 100, 0.12)';
+                        e.currentTarget.style.borderColor = 'rgba(74, 222, 128, 0.65)';
+                        e.currentTarget.style.boxShadow = '0 0 24px rgba(74, 222, 128, 0.16)';
                     }}
                     onMouseLeave={e => {
-                        e.currentTarget.style.borderColor = 'rgba(80, 160, 100, 0.18)';
-                        e.currentTarget.style.boxShadow = 'none';
+                        e.currentTarget.style.borderColor = 'rgba(74, 222, 128, 0.42)';
+                        e.currentTarget.style.boxShadow = '0 0 16px rgba(74, 222, 128, 0.08)';
                     }}
                 >
-                    TRY AGAIN
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent
+                        translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                    <span className="relative z-10">TRY AGAIN</span>
                 </button>
 
+                {/* Change Difficulty — same weight, neutral white accent, equal sibling not subordinate */}
                 <button
                     onClick={() => { playClick(); onChangeDifficulty(); }}
-                    className="btn-press flex-1 py-4 font-display font-semibold text-white text-sm tracking-wider"
+                    className="btn-press flex-1 py-4 font-display font-semibold text-white text-base tracking-widest relative overflow-hidden group"
                     style={{
                         borderRadius: '1.25rem',
-                        background: 'rgba(100, 100, 120, 0.10)',
-                        border: '1px solid rgba(140, 140, 160, 0.16)',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.22)',
                         backdropFilter: 'blur(20px) saturate(1.4)',
                         WebkitBackdropFilter: 'blur(20px) saturate(1.4)',
                         transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
                     }}
                     onMouseEnter={e => {
-                        e.currentTarget.style.borderColor = 'rgba(140, 140, 160, 0.32)';
-                        e.currentTarget.style.boxShadow = '0 0 14px rgba(140, 140, 160, 0.10)';
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.40)';
+                        e.currentTarget.style.boxShadow = '0 0 16px rgba(255, 255, 255, 0.05)';
                     }}
                     onMouseLeave={e => {
-                        e.currentTarget.style.borderColor = 'rgba(140, 140, 160, 0.16)';
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.22)';
                         e.currentTarget.style.boxShadow = 'none';
                     }}
                 >
-                    CHANGE DIFFICULTY
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent
+                        translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                    <span className="relative z-10">CHANGE DIFFICULTY</span>
                 </button>
             </div>
         </div>

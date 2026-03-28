@@ -32,8 +32,10 @@ export default function Home() {
     const [page, setPage]         = useState(0);
     const [gameKey, setGameKey]   = useState(0);
     const [showGame, setShowGame] = useState(false);
-    const [obscureCipher, setObscureCipher]   = useState(false);
-    const [initialCipher, setInitialCipher]   = useState<PrefetchedCipher | null>(null);
+    const [obscureCipher, setObscureCipher] = useState(false);
+    // Cipher data passed directly as a prop to the new GameArea so its useState
+    // initializers have the data on the very first render — no ref timing concerns
+    const [pendingCipher, setPendingCipher] = useState<PrefetchedCipher | null>(null);
 
     const gameOverAllowedRef    = useRef(false);
     const sessionIdRef          = useRef(0);
@@ -65,14 +67,16 @@ export default function Home() {
         if (page === 2) {
             setObscureCipher(true);
             setPage(1);
-            // Await the prefetch so GameArea gets the cipher synchronously on first render
             keyTimerRef.current = setTimeout(async () => {
+                // Await the prefetch, then set cipher + key in one batch so GameArea
+                // receives the data as a prop on its very first render
                 const data = await prefetchedCipherRef.current;
-                setInitialCipher(data);
+                setPendingCipher(data);
                 setGameKey(next);
                 setObscureCipher(false);
             }, TRANSITION_MS);
         } else {
+            setPendingCipher(null);
             setGameKey(next);
             setShowGame(true);
             setPage(1);
@@ -193,7 +197,7 @@ export default function Home() {
                                     activePage={page}
                                     obscureCipher={obscureCipher}
                                     prefetchedCipherRef={prefetchedCipherRef}
-                                    initialCipher={initialCipher}
+                                    pendingCipher={pendingCipher}
                                 />
                             )}
                         </div>
