@@ -23,10 +23,10 @@ export default function GameOver({
 }: GameOverModalProps) {
     return (
         <div
-            className="w-full flex flex-col items-center gap-6 max-w-xl mx-auto px-4"
+            className="w-full flex flex-col items-center gap-4 max-w-xl mx-auto px-4"
             style={{ animation: 'fadeIn 0.5s ease-out' }}
         >
-            {/* Title - slow red glow pulse */}
+            {/* Title */}
             <div
                 className="text-center"
                 style={{ animation: 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both' }}
@@ -50,14 +50,14 @@ export default function GameOver({
                 </div>
             )}
 
-            {/* 4 stat squares — score card has high score sub-label */}
+            {/* 4 stat squares */}
             <div
                 className="grid grid-cols-4 gap-3 w-full"
                 style={{ animation: 'statFadeIn 0.4s ease-out 0.25s both' }}
             >
                 {/* Score card */}
                 <div
-                    className="glass flex flex-col items-center justify-center py-5 px-2 text-center"
+                    className="glass flex flex-col items-center justify-center py-6 px-2 text-center"
                     style={{
                         borderRadius: '1.25rem',
                         animation: 'statFadeIn 0.4s ease-out 0.25s both',
@@ -67,7 +67,6 @@ export default function GameOver({
                     <p className={`font-display font-bold text-2xl leading-none ${isNewBest ? 'new-best-glow' : 'text-white'}`}>
                         {score}
                     </p>
-                    {/* high score sub-label */}
                     {isNewBest ? (
                         <p className="font-mono text-[10px] mt-1.5 text-green-400 leading-none">▲ NEW BEST</p>
                     ) : previousBest !== null ? (
@@ -85,7 +84,7 @@ export default function GameOver({
                 ].map((stat, i) => (
                     <div
                         key={stat.label}
-                        className="glass flex flex-col items-center justify-center py-5 px-2 text-center"
+                        className="glass flex flex-col items-center justify-center py-6 px-2 text-center"
                         style={{
                             borderRadius: '1.25rem',
                             animation: `statFadeIn 0.4s ease-out ${0.32 + i * 0.07}s both`,
@@ -99,32 +98,31 @@ export default function GameOver({
                 ))}
             </div>
 
-            {/* Action buttons — mt-3 adds extra breathing room vs the stat cards above */}
+            {/* Action buttons — mt-4 creates clear visual separation from stat cards */}
             <div
-                className="flex gap-3 w-full mt-3"
+                className="flex gap-3 w-full mt-4"
                 style={{ animation: 'statFadeIn 0.4s ease-out 0.45s both' }}
             >
-                {/* Try Again — green accent signals primary action, shimmer on hover */}
                 <button
                     onClick={() => { playClick(); onPlayAgain(); }}
                     className="btn-press flex-1 py-4 font-display font-semibold text-white text-base tracking-widest relative overflow-hidden group"
                     style={{
                         borderRadius: '1.25rem',
                         background: 'rgba(74, 222, 128, 0.10)',
-                        border: '1px solid rgba(74, 222, 128, 0.42)',
+                        border: '1px solid rgba(74, 222, 128, 0.45)',
                         backdropFilter: 'blur(20px) saturate(1.4)',
                         WebkitBackdropFilter: 'blur(20px) saturate(1.4)',
-                        boxShadow: '0 0 16px rgba(74, 222, 128, 0.08)',
+                        boxShadow: '0 0 18px rgba(74, 222, 128, 0.10)',
                         textShadow: '0 0 10px rgba(74, 222, 128, 0.22)',
                         transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
                     }}
                     onMouseEnter={e => {
-                        e.currentTarget.style.borderColor = 'rgba(74, 222, 128, 0.65)';
-                        e.currentTarget.style.boxShadow = '0 0 24px rgba(74, 222, 128, 0.16)';
+                        e.currentTarget.style.borderColor = 'rgba(74, 222, 128, 0.70)';
+                        e.currentTarget.style.boxShadow = '0 0 28px rgba(74, 222, 128, 0.20)';
                     }}
                     onMouseLeave={e => {
-                        e.currentTarget.style.borderColor = 'rgba(74, 222, 128, 0.42)';
-                        e.currentTarget.style.boxShadow = '0 0 16px rgba(74, 222, 128, 0.08)';
+                        e.currentTarget.style.borderColor = 'rgba(74, 222, 128, 0.45)';
+                        e.currentTarget.style.boxShadow = '0 0 18px rgba(74, 222, 128, 0.10)';
                     }}
                 >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent
@@ -132,25 +130,25 @@ export default function GameOver({
                     <span className="relative z-10">TRY AGAIN</span>
                 </button>
 
-                {/* Change Difficulty — same weight, neutral white accent, equal sibling not subordinate */}
                 <button
                     onClick={() => { playClick(); onChangeDifficulty(); }}
                     className="btn-press flex-1 py-4 font-display font-semibold text-white text-base tracking-widest relative overflow-hidden group"
                     style={{
                         borderRadius: '1.25rem',
                         background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid rgba(255, 255, 255, 0.22)',
+                        border: '1px solid rgba(255, 255, 255, 0.38)',
                         backdropFilter: 'blur(20px) saturate(1.4)',
                         WebkitBackdropFilter: 'blur(20px) saturate(1.4)',
+                        boxShadow: '0 0 18px rgba(255, 255, 255, 0.04)',
                         transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
                     }}
                     onMouseEnter={e => {
-                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.40)';
-                        e.currentTarget.style.boxShadow = '0 0 16px rgba(255, 255, 255, 0.05)';
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.60)';
+                        e.currentTarget.style.boxShadow = '0 0 24px rgba(255, 255, 255, 0.08)';
                     }}
                     onMouseLeave={e => {
-                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.22)';
-                        e.currentTarget.style.boxShadow = 'none';
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.38)';
+                        e.currentTarget.style.boxShadow = '0 0 18px rgba(255, 255, 255, 0.04)';
                     }}
                 >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent
