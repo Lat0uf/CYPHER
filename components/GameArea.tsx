@@ -10,7 +10,7 @@ import { TIMER_DURATIONS } from '@/lib/gameState';
 import { playCorrect, playWrong, playGameOver, playClick, startTimerTick, stopTimerTick } from '@/lib/useSound';
 import { getBest, setBest, isNewBest as checkIsNewBest } from '@/lib/useHighScore';
 
-import type { PrefetchedCipher } from '@/app/page';
+import type { CipherData } from '@/app/page';
 
 interface GameAreaProps {
     sessionId: number;
@@ -22,8 +22,7 @@ interface GameAreaProps {
     reducedMotion?: boolean;
     activePage?: number;
     obscureCipher?: boolean;
-    prefetchedCipherRef?: React.MutableRefObject<Promise<PrefetchedCipher | null>>;
-    pendingCipher?: PrefetchedCipher | null;
+    pendingCipher?: CipherData | null;
 }
 
 export default function GameArea({
@@ -36,7 +35,6 @@ export default function GameArea({
     reducedMotion = false,
     activePage = 1,
     obscureCipher = false,
-    prefetchedCipherRef,
     pendingCipher = null,
 }: GameAreaProps) {
     const [gameState, setGameState] = useState<GameState>({
@@ -110,7 +108,10 @@ export default function GameArea({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gameState.gameOver]);
 
-    const applyCipherData = useCallback((data: PrefetchedCipher) => {
+    const applyCipherData = useCallback((data: {
+        cipherText: string; cipherType: string; hashedAnswer: string;
+        altHashedAnswers?: string[]; correctAnswer?: string; color?: string;
+    }) => {
         setGameState(prev => ({
             ...prev,
             currentCipher:    data.cipherText,
@@ -142,19 +143,8 @@ export default function GameArea({
     }, [difficulty, gameState.level, applyCipherData]);
 
     useEffect(() => {
-        // pendingCipher already seeded state as a React prop — nothing to fetch
-        if (pendingCipher) return;
-        // Use the prefetched cipher promise if available, fall back to a fresh fetch
-        const prefetchProm = prefetchedCipherRef?.current ?? Promise.resolve(null);
-        setIsLoading(true);
-        prefetchProm.then(data => {
-            if (data) {
-                applyCipherData(data);
-                setIsLoading(false);
-            } else {
-                loadCipher();
-            }
-        });
+        if (pendingCipher) return; // state already seeded from prop, nothing to fetch
+        loadCipher();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -219,8 +209,8 @@ export default function GameArea({
                 setFeedback('wrong');
                 // Stop the timer interval immediately — no need to keep ticking through the vignette window
                 setGameState(prev => ({ ...prev, isPlaying: false }));
-                // Clear feedback at the same time as game over fires so border fades out cleanly
-                feedbackTimerRef.current    = setTimeout(() => setFeedback(null), 1200);
+                // Clear feedback early so red border fades out before the slide transition
+                feedbackTimerRef.current    = setTimeout(() => setFeedback(null), 500);
                 wrongAnswerTimerRef.current = setTimeout(() => {
                     setGameState(prev => ({ ...prev, gameOver: true }));
                 }, 1200);
@@ -312,16 +302,12 @@ export default function GameArea({
                     </div>
 
                     <div className="mb-6 w-full">
-                        {gameState.currentCipher && !obscureCipher ? (
+                        {gameState.currentCipher && !obscureCipher && (
                             <CipherDisplay
                                 cipherText={gameState.currentCipher}
                                 cipherType={gameState.cipherType || undefined}
                                 color={cipherColor}
                             />
-                        ) : (
-                            <div className="glass p-10 min-h-[160px] flex items-center justify-center">
-                                <p className="font-mono text-matrix-200 animate-pulse">LOADING CIPHER...</p>
-                            </div>
                         )}
                     </div>
 

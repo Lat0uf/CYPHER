@@ -23,15 +23,15 @@ export default function GameOver({
 }: GameOverModalProps) {
     return (
         <div
-            className="w-full flex flex-col items-center gap-4 max-w-xl mx-auto px-4"
-            style={{ animation: 'fadeIn 0.5s ease-out' }}
+            className="w-full flex flex-col items-center max-w-xl mx-auto px-4"
+            style={{ gap: 0, animation: 'fadeIn 0.5s ease-out' }}
         >
-            {/* Title */}
+            {/* Title — tight internal unit */}
             <div
                 className="text-center"
-                style={{ animation: 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both' }}
+                style={{ marginBottom: '1.5rem', animation: 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both' }}
             >
-                <h2 className="connection-lost-glow font-display text-4xl md:text-5xl font-bold mb-2">
+                <h2 className="connection-lost-glow font-display text-4xl md:text-5xl font-bold mb-1">
                     CONNECTION LOST
                 </h2>
                 <p className="font-mono text-matrix-200 text-sm tracking-widest uppercase">
@@ -39,27 +39,27 @@ export default function GameOver({
                 </p>
             </div>
 
-            {/* Answer reveal */}
+            {/* Answer reveal — 1rem below title, 0.75rem above stats */}
             {correctAnswer && (
                 <div
                     className="glass w-full text-center px-8 py-4"
-                    style={{ animation: 'statFadeIn 0.4s ease-out 0.15s both' }}
+                    style={{ marginBottom: '0.75rem', animation: 'statFadeIn 0.4s ease-out 0.15s both' }}
                 >
                     <p className="text-matrix-300 text-xs uppercase tracking-widest mb-1">The answer was</p>
                     <p className="font-mono text-xl text-white font-semibold tracking-widest">{correctAnswer}</p>
                 </div>
             )}
 
-            {/* 4 stat squares */}
+            {/* Stat cards — tight internal gap, they're a grouped unit */}
             <div
-                className="grid grid-cols-4 gap-3 w-full"
-                style={{ animation: 'statFadeIn 0.4s ease-out 0.25s both' }}
+                className="grid grid-cols-4 gap-2 w-full"
+                style={{ marginBottom: '1.75rem', animation: 'statFadeIn 0.4s ease-out 0.25s both' }}
             >
-                {/* Score card */}
                 <div
-                    className="glass flex flex-col items-center justify-center py-6 px-2 text-center"
+                    className="glass flex flex-col items-center justify-center py-5 px-2 text-center"
                     style={{
                         borderRadius: '1.25rem',
+                        border: '1px solid rgba(255,255,255,0.09)',
                         animation: 'statFadeIn 0.4s ease-out 0.25s both',
                     }}
                 >
@@ -76,7 +76,6 @@ export default function GameOver({
                     ) : null}
                 </div>
 
-                {/* Remaining 3 stats */}
                 {[
                     { label: 'Level', value: String(level) },
                     { label: 'Mode', value: difficulty, cap: true },
@@ -84,9 +83,10 @@ export default function GameOver({
                 ].map((stat, i) => (
                     <div
                         key={stat.label}
-                        className="glass flex flex-col items-center justify-center py-6 px-2 text-center"
+                        className="glass flex flex-col items-center justify-center py-5 px-2 text-center"
                         style={{
                             borderRadius: '1.25rem',
+                            border: '1px solid rgba(255,255,255,0.09)',
                             animation: `statFadeIn 0.4s ease-out ${0.32 + i * 0.07}s both`,
                         }}
                     >
@@ -98,9 +98,9 @@ export default function GameOver({
                 ))}
             </div>
 
-            {/* Action buttons — mt-4 creates clear visual separation from stat cards */}
+            {/* Buttons */}
             <div
-                className="flex gap-3 w-full mt-4"
+                className="flex gap-3 w-full"
                 style={{ animation: 'statFadeIn 0.4s ease-out 0.45s both' }}
             >
                 <button
@@ -108,25 +108,14 @@ export default function GameOver({
                     className="btn-press flex-1 py-4 font-display font-semibold text-white text-base tracking-widest relative overflow-hidden group"
                     style={{
                         borderRadius: '1.25rem',
-                        background: 'rgba(74, 222, 128, 0.10)',
-                        border: '1px solid rgba(74, 222, 128, 0.45)',
-                        backdropFilter: 'blur(20px) saturate(1.4)',
-                        WebkitBackdropFilter: 'blur(20px) saturate(1.4)',
-                        boxShadow: '0 0 18px rgba(74, 222, 128, 0.10)',
-                        textShadow: '0 0 10px rgba(74, 222, 128, 0.22)',
-                        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
-                    }}
-                    onMouseEnter={e => {
-                        e.currentTarget.style.borderColor = 'rgba(74, 222, 128, 0.70)';
-                        e.currentTarget.style.boxShadow = '0 0 28px rgba(74, 222, 128, 0.20)';
-                    }}
-                    onMouseLeave={e => {
-                        e.currentTarget.style.borderColor = 'rgba(74, 222, 128, 0.45)';
-                        e.currentTarget.style.boxShadow = '0 0 18px rgba(74, 222, 128, 0.10)';
+                        background: 'var(--glass-bg)',
+                        border: '1px solid rgba(255,255,255,0.38)',
+                        boxShadow: '0 0 18px rgba(255,255,255,0.07), inset 0 1px 0 var(--glass-highlight)',
+                        willChange: 'transform',
+                        textShadow: '0 0 12px rgba(255,255,255,0.15)',
                     }}
                 >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent
-                        translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                     <span className="relative z-10">TRY AGAIN</span>
                 </button>
 
@@ -135,24 +124,14 @@ export default function GameOver({
                     className="btn-press flex-1 py-4 font-display font-semibold text-white text-base tracking-widest relative overflow-hidden group"
                     style={{
                         borderRadius: '1.25rem',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid rgba(255, 255, 255, 0.38)',
-                        backdropFilter: 'blur(20px) saturate(1.4)',
-                        WebkitBackdropFilter: 'blur(20px) saturate(1.4)',
-                        boxShadow: '0 0 18px rgba(255, 255, 255, 0.04)',
-                        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
-                    }}
-                    onMouseEnter={e => {
-                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.60)';
-                        e.currentTarget.style.boxShadow = '0 0 24px rgba(255, 255, 255, 0.08)';
-                    }}
-                    onMouseLeave={e => {
-                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.38)';
-                        e.currentTarget.style.boxShadow = '0 0 18px rgba(255, 255, 255, 0.04)';
+                        background: 'var(--glass-bg)',
+                        border: '1px solid rgba(255,255,255,0.38)',
+                        boxShadow: '0 0 18px rgba(255,255,255,0.07), inset 0 1px 0 var(--glass-highlight)',
+                        willChange: 'transform',
+                        textShadow: '0 0 12px rgba(255,255,255,0.15)',
                     }}
                 >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent
-                        translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                     <span className="relative z-10">CHANGE DIFFICULTY</span>
                 </button>
             </div>

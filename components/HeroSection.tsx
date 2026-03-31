@@ -265,10 +265,14 @@ export default function HeroSection({
                     text-white hover:text-white
                     disabled:opacity-50 disabled:cursor-not-allowed
                     relative overflow-hidden group"
-                style={{ textShadow: '0 0 12px rgba(255,255,255,0.2)' }}
+                style={{
+                    border: '1px solid rgba(255,255,255,0.38)',
+                    boxShadow: '0 8px 32px var(--glass-shadow), 0 0 18px rgba(255,255,255,0.07), inset 0 1px 0 var(--glass-highlight)',
+                    textShadow: '0 0 12px rgba(255,255,255,0.2)',
+                    willChange: 'transform',
+                }}
             >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent
-                    translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                 <span className="relative z-10">
                     {isPlaying ? 'GAME IN PROGRESS' : 'BEGIN DECRYPTION'}
                 </span>

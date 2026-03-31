@@ -6,7 +6,7 @@
 
 :root {
   --bg-primary: #0a0a0a;
-  --glass-bg: rgba(255, 255, 255, 0.07);
+  --glass-bg: rgba(255, 255, 255, 0.10);
   --glass-border: rgba(255, 255, 255, 0.14);
   --glass-highlight: rgba(255, 255, 255, 0.08);
   --glass-shadow: rgba(0, 0, 0, 0.25);
@@ -120,12 +120,11 @@ body.light-mode .text-red-400 {
 }
 
 /* ===== GLASSMORPHISM ===== */
-/* Low bg opacity ensures backdrop blur is visible through the element.
-   Rain should be faintly visible through every glass surface. */
+/* backdrop-filter removed site-wide — canvas elements don't participate in CSS
+   compositing so blur had no real source to sample, producing haze not blur.
+   Removing it eliminates all GPU compositing flash artifacts from btn-press transitions. */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
   border: 1px solid var(--glass-border);
   border-radius: 1.5rem;
   box-shadow:

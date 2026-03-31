@@ -56,7 +56,6 @@ const OPTIONS: Option[] = [
 const STUB_W      = 78;
 const OUTER_R     = '1.2rem';
 const BORDER      = '1px solid var(--glass-border)';
-const GLASS       = 'blur(20px) saturate(1.4)';
 const SLIDE_MS    = 420;
 const EASING      = 'cubic-bezier(0.16, 1, 0.3, 1)';
 const THROTTLE_MS = 250;
@@ -139,25 +138,19 @@ export default function DifficultySelector({ value, onChange, disabled = false }
                     const isHov   = hovered === opt.value && !sel && !disabled;
 
                     if (sel) {
-                        // Ghost matches the stub appearance exactly so there is no
-                        // visual change when React swaps stub -> ghost on selection
-                        // Full OUTER_R on all corners so nothing pokes behind card corners
-                        // Same backdropFilter as stubs, card inner div has NO backdropFilter
-                        // so there is only ever one blur layer at any pixel (no ghosting)
+                        // Ghost div holds layout space while the selected card slides above it
                         return (
                             <div
                                 key={opt.value}
                                 aria-hidden="true"
                                 style={{
-                                    flex:                 '1 1 0',
-                                    minWidth:             0,
-                                    pointerEvents:        'none',
-                                    backdropFilter:       GLASS,
-                                    WebkitBackdropFilter: GLASS,
-                                    background:           'var(--glass-bg)',
-                                    borderRadius:         OUTER_R,
-                                    boxShadow:            'inset 0 1px 0 var(--glass-highlight)',
-                                    padding:              '0.82rem 1.1rem 1rem',
+                                    flex:          '1 1 0',
+                                    minWidth:      0,
+                                    pointerEvents: 'none',
+                                    background:    'var(--glass-bg)',
+                                    borderRadius:  OUTER_R,
+                                    boxShadow:     'inset 0 1px 0 var(--glass-highlight)',
+                                    padding:       '0.82rem 1.1rem 1rem',
                                 }}
                             >
                                 <div style={{ visibility: 'hidden' }}>
@@ -189,25 +182,23 @@ export default function DifficultySelector({ value, onChange, disabled = false }
                             onMouseEnter={() => setHovered(opt.value)}
                             onMouseLeave={() => setHovered(null)}
                             style={{
-                                width:                `${STUB_W}px`,
-                                flexShrink:     0,
-                                backdropFilter:       GLASS,
-                                WebkitBackdropFilter: GLASS,
-                                background:           'var(--glass-bg)',
-                                borderRadius:         `${tl} ${tr} ${br} ${bl}`,
-                                borderTop:            BORDER,
-                                borderBottom:         BORDER,
-                                borderLeft:           isFirst ? BORDER : 'none',
-                                borderRight:          isLast  ? BORDER : 'none',
-                                boxShadow:            'inset 0 1px 0 var(--glass-highlight)',
-                                display:              'flex',
-                                alignItems:           'center',
-                                justifyContent:       'center',
-                                padding:              '0.88rem 0',
-                                cursor:               disabled ? 'not-allowed' : 'pointer',
-                                opacity:              disabled ? 0.38 : 1,
-                                zIndex:               0,
-                                transition:           'none',
+                                width:        `${STUB_W}px`,
+                                flexShrink:   0,
+                                background:   'var(--glass-bg)',
+                                borderRadius: `${tl} ${tr} ${br} ${bl}`,
+                                borderTop:    BORDER,
+                                borderBottom: BORDER,
+                                borderLeft:   isFirst ? BORDER : 'none',
+                                borderRight:  isLast  ? BORDER : 'none',
+                                boxShadow:    'inset 0 1px 0 var(--glass-highlight)',
+                                display:      'flex',
+                                alignItems:   'center',
+                                justifyContent: 'center',
+                                padding:      '0.88rem 0',
+                                cursor:       disabled ? 'not-allowed' : 'pointer',
+                                opacity:      disabled ? 0.38 : 1,
+                                zIndex:       0,
+                                transition:   'none',
                             }}
                         >
                             <span style={{
@@ -226,13 +217,7 @@ export default function DifficultySelector({ value, onChange, disabled = false }
                     );
                 })}
 
-                {/*
-                  The one sliding card. Always in the DOM, never unmounted.
-                  `left` and `right` both transition simultaneously keeping card
-                  width constant while the position moves. GPU-composited so zero
-                  layout reflow. The inner div owns backdrop-filter separately from
-                  the outer shadow to prevent Chromium banding artifacts
-                */}
+                {/* Sliding selected card — GPU-composited transform, zero layout reflow */}
                 <div
                     style={{
                         position:             'absolute',

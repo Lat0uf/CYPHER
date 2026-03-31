@@ -14,9 +14,7 @@ function KeyChip({ children }: { children: React.ReactNode }) {
             style={{
                 borderRadius: '5px',
                 border: '1px solid rgba(255,255,255,0.18)',
-                background: 'rgba(255,255,255,0.05)',
-                backdropFilter: 'blur(8px)',
-                WebkitBackdropFilter: 'blur(8px)',
+                background: 'rgba(255,255,255,0.08)',
                 minWidth: '2rem',
                 lineHeight: 1.6,
             }}
