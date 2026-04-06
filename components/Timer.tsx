@@ -1,6 +1,7 @@
 'use client';
 
 import { formatTime, getTimerPercentage, type Difficulty } from '@/lib/gameState';
+import { useState, useEffect } from 'react';
 
 interface TimerProps {
     timeRemaining: number;
@@ -17,10 +18,20 @@ const COLOR_STOPS: [number, [number, number, number]][] = [
     [0,   [200,  20,  20]],
 ];
 
-function getTimerColor(pct: number): string {
-    for (let i = 0; i < COLOR_STOPS.length - 1; i++) {
-        const [hiPct, hiRGB] = COLOR_STOPS[i];
-        const [loPct, loRGB] = COLOR_STOPS[i + 1];
+// Darker stops so the countdown reads clearly on a light bg
+const LIGHT_COLOR_STOPS: [number, [number, number, number]][] = [
+    [100, [100, 100, 110]],
+    [70,  [180, 140,  40]],
+    [50,  [200, 120,  20]],
+    [25,  [200,  50,  20]],
+    [10,  [190,  20,  20]],
+    [0,   [170,  10,  10]],
+];
+
+function getTimerColor(pct: number, stops: typeof COLOR_STOPS): string {
+    for (let i = 0; i < stops.length - 1; i++) {
+        const [hiPct, hiRGB] = stops[i];
+        const [loPct, loRGB] = stops[i + 1];
         if (pct >= loPct && pct <= hiPct) {
             const t = (pct - loPct) / (hiPct - loPct);
             const r = Math.round(loRGB[0] + t * (hiRGB[0] - loRGB[0]));
@@ -37,7 +48,17 @@ function getTimerColor(pct: number): string {
 export default function Timer({ timeRemaining, difficulty, isActive }: TimerProps) {
     const percentage = getTimerPercentage(timeRemaining, difficulty);
     const isCritical = timeRemaining <= 10000 && timeRemaining > 0;
-    const color      = getTimerColor(percentage);
+
+    const [isLight, setIsLight] = useState(false);
+    useEffect(() => {
+        const check = () => setIsLight(document.body.classList.contains('light-mode'));
+        check();
+        const obs = new MutationObserver(check);
+        obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+        return () => obs.disconnect();
+    }, []);
+
+    const color = getTimerColor(percentage, isLight ? LIGHT_COLOR_STOPS : COLOR_STOPS);
 
     return (
         <div className="w-full max-w-2xl">
@@ -65,7 +86,7 @@ export default function Timer({ timeRemaining, difficulty, isActive }: TimerProp
                 at all fill levels and never conflicts with the width transition */}
             <div
                 className="h-3 rounded-full overflow-hidden"
-                style={{ background: 'rgba(255,255,255,0.08)' }}
+                style={{ background: isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)' }}
             >
                 <div
                     style={{

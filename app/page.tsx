@@ -26,8 +26,7 @@ export default function Home() {
     const [difficulty, setDifficulty]       = useState<Difficulty>('normal');
     const [reducedMotion, setReducedMotion] = useState(false);
     const [showHowToPlay, setShowHowToPlay] = useState(false);
-    // theme state is consumed by SettingsToggle via onThemeChange callback
-    const setTheme = useState<'dark' | 'light'>('dark')[1];
+    const [theme, setTheme]                 = useState<'dark' | 'light'>('dark');
 
     const [page, setPage]         = useState(0);
     const [gameKey, setGameKey]   = useState(0);
@@ -132,7 +131,7 @@ export default function Home() {
     const closeHTP = useCallback(() => { playAccessibilityTick(); setShowHowToPlay(false); }, []);
 
     return (
-        <div style={{ position: 'fixed', inset: 0, clipPath: 'inset(0)' }}>
+        <div style={{ position: 'fixed', inset: 0, clipPath: 'inset(0)', background: 'var(--bg-primary)' }}>
             <MatrixRain
                 speed={matrixSpeed}
                 reducedMotion={reducedMotion}
@@ -140,6 +139,7 @@ export default function Home() {
                 pageIndex={page}
                 transitionMs={TRANSITION_MS}
                 htpOpen={showHowToPlay}
+                theme={theme}
             />
 
             <div

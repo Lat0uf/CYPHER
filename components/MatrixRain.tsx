@@ -9,6 +9,7 @@ interface MatrixRainProps {
     pageIndex?: number;
     transitionMs?: number;
     htpOpen?: boolean;
+    theme?: 'dark' | 'light';
 }
 
 interface Column {
@@ -32,6 +33,7 @@ export default function MatrixRain({
     pageIndex = 0,
     transitionMs = 850,
     htpOpen = false,
+    theme = 'dark',
 }: MatrixRainProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -42,6 +44,7 @@ export default function MatrixRain({
     const transitionMsRef  = useRef(transitionMs);
     const htpOpenRef       = useRef(htpOpen);
     const mouseRef         = useRef({ x: 0, y: 0 });
+    const themeRef         = useRef(theme);
 
     useEffect(() => { difficultyRef.current    = difficulty;    }, [difficulty]);
     useEffect(() => { speedRef.current         = speed;         }, [speed]);
@@ -49,6 +52,7 @@ export default function MatrixRain({
     useEffect(() => { pageIndexRef.current     = pageIndex;     }, [pageIndex]);
     useEffect(() => { transitionMsRef.current  = transitionMs;  }, [transitionMs]);
     useEffect(() => { htpOpenRef.current       = htpOpen;       }, [htpOpen]);
+    useEffect(() => { themeRef.current          = theme;         }, [theme]);
 
     // Single mount-only effect. Columns are allocated once and reused across
     // live and static modes so toggling never resets visual state
@@ -102,6 +106,13 @@ export default function MatrixRain({
         let activeEggs: ActiveEgg[]  = [];
         let lastEggSpawn              = 0;
         let hueR = 1.0, hueG = 1.0, hueB = 1.0;
+
+        // Lerped canvas bg — avoids the instant bg snap when theme switches.
+        // Initialized to the current theme so there's no pop on first frame.
+        const initLight = themeRef.current === 'light';
+        let bgR = initLight ? 240 : 10;
+        let bgG = initLight ? 236 : 10;
+        let bgB = initLight ? 228 : 10;
         let lerpedMouseX              = window.innerWidth / 2;
         let lerpedScrollOffset        = 0;
         let lerpedHorizontalOffset    = 0;
@@ -177,9 +188,21 @@ export default function MatrixRain({
                 hueR += (hueTarget.r - hueR) * blend;
                 hueG += (hueTarget.g - hueG) * blend;
                 hueB += (hueTarget.b - hueB) * blend;
+
+                // Lerp bg toward target theme color — ~1.2s to converge at 60fps,
+                // matching the CSS background-color transition so they stay in sync
+                const tgtLight = themeRef.current === 'light';
+                const tR = tgtLight ? 240 : 10;
+                const tG = tgtLight ? 236 : 10;
+                const tB = tgtLight ? 228 : 10;
+                const bgK = 0.016 * dt;
+                bgR += (tR - bgR) * bgK;
+                bgG += (tG - bgG) * bgK;
+                bgB += (tB - bgB) * bgK;
             }
 
-            targetCtx.fillStyle = '#0a0a0a';
+            const isLight = themeRef.current === 'light';
+            targetCtx.fillStyle = `rgb(${Math.round(bgR)},${Math.round(bgG)},${Math.round(bgB)})`;
             targetCtx.fillRect(0, 0, w, viewH);
             targetCtx.textBaseline = 'top';
             targetCtx.font = '500 ' + FONT_SIZE + "px 'Courier New', monospace";
@@ -222,7 +245,10 @@ export default function MatrixRain({
                             const ci = Math.floor((virtualPy - eggTop) / FONT_SIZE);
                             if (ci >= 0 && ci < egg.text.length) {
                                 const a = (t === 0 ? 1.0 : Math.max(0.3, 1.0 - t * 0.3)) * depthAlpha;
-                                targetCtx.fillStyle = 'rgba(255,255,255,' + a + ')';
+                                // Easter egg text: white on dark, dark ink on light
+                                targetCtx.fillStyle = isLight
+                                    ? 'rgba(40,35,30,' + a + ')'
+                                    : 'rgba(255,255,255,' + a + ')';
                                 targetCtx.fillText(egg.text[ci], x, screenPy);
                             }
                             continue;
@@ -231,10 +257,20 @@ export default function MatrixRain({
 
                     const bright = t === 0 ? 185 : Math.max(30, 150 - t * 25);
                     const alpha  = (t === 0 ? 0.95 : Math.max(0.08, 0.75 - t * 0.12)) * depthAlpha;
-                    const r      = Math.min(255, Math.floor(bright * hueR));
-                    const g      = Math.min(255, Math.floor(bright * hueG));
-                    const b      = Math.min(255, Math.floor(bright * hueB));
-                    targetCtx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+
+                    if (isLight) {
+                        // Inverted brightness: dark characters on light canvas
+                        const dark = t === 0 ? 60 : Math.min(180, 80 + t * 18);
+                        const lr   = Math.min(255, Math.floor(dark * hueR));
+                        const lg   = Math.min(255, Math.floor(dark * hueG));
+                        const lb   = Math.min(255, Math.floor(dark * hueB));
+                        targetCtx.fillStyle = 'rgba(' + lr + ',' + lg + ',' + lb + ',' + alpha + ')';
+                    } else {
+                        const r = Math.min(255, Math.floor(bright * hueR));
+                        const g = Math.min(255, Math.floor(bright * hueG));
+                        const b = Math.min(255, Math.floor(bright * hueB));
+                        targetCtx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+                    }
 
                     const ci = dt === 0
                         ? col.chars[t % col.chars.length]
@@ -495,7 +531,7 @@ export default function MatrixRain({
             const lerpK = (rotX === 0 && rotY === 0) ? 0.06 : reduced ? 0.025 : 0.06;
             rotX += (targetX - rotX) * lerpK;
             rotY += (targetY - rotY) * lerpK;
-            canvas.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.08)`;
+            canvas.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.18)`;
             rafId = requestAnimationFrame(loop);
         };
         rafId = requestAnimationFrame(loop);

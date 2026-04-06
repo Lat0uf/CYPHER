@@ -54,7 +54,7 @@ export default function InputField({
                 style={{ transition: 'border-color 0.35s ease, box-shadow 0.35s ease, opacity 0.4s ease' }}
                 className={`
                     flex-1 glass px-6 py-4
-                    font-mono text-xl text-white light-adapt
+                    font-mono text-xl text-white
                     placeholder:text-matrix-300
                     focus:outline-none focus:ring-2 focus:ring-white/15
                     disabled:opacity-50 disabled:cursor-not-allowed
@@ -65,7 +65,7 @@ export default function InputField({
             <button
                 type="submit"
                 disabled={disabled || !value.trim()}
-                className="btn-press glass px-8 py-4 font-display font-semibold text-white light-adapt
+                className="btn-press glass px-8 py-4 font-display font-semibold text-white
                     hover:bg-white/10
                     disabled:opacity-50 disabled:pointer-events-none
                     transition-all duration-200"

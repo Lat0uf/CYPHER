@@ -23,6 +23,7 @@
 
 html {
   background: var(--bg-primary);
+  transition: background-color 1.2s ease;
 }
 
 html,
@@ -37,55 +38,130 @@ body {
 
 body {
   font-family: 'Inter', sans-serif;
-  transition: background-color 0.4s ease, color 0.3s ease;
+  transition:
+    background-color 1.2s ease,
+    color 0.8s ease;
+}
+
+/* Gradual theme crossfade on visual properties only.
+   canvas excluded — it redraws itself, transition would flash.
+   transform/filter excluded — btn-press owns those with tighter timing. */
+body .glass,
+body button,
+body input {
+  transition:
+    background-color 1.2s ease,
+    border-color 1.0s ease,
+    color 0.8s ease,
+    box-shadow 1.0s ease;
 }
 
 /* ===== LIGHT MODE ===== */
 body.light-mode {
-  --bg-primary: #f5f5f5;
-  --glass-bg: rgba(255, 255, 255, 0.55);
-  --glass-border: rgba(0, 0, 0, 0.09);
-  --glass-highlight: rgba(255, 255, 255, 0.90);
-  --glass-shadow: rgba(0, 0, 0, 0.06);
-  --text-heading: #111111;
-  --text-body: #222222;
+  --bg-primary: #f0ece4;
+  --glass-bg: rgba(255, 255, 255, 0.62);
+  --glass-border: rgba(0, 0, 0, 0.13);
+  --glass-highlight: rgba(255, 255, 255, 0.80);
+  --glass-shadow: rgba(0, 0, 0, 0.07);
+  --text-heading: #1a1a1a;
+  --text-body: #333333;
   --text-muted: #666666;
+  --btn-ring: rgba(0, 0, 0, 0.18);
 }
 
-body.light-mode canvas.matrix-canvas {
-  filter: invert(1) hue-rotate(180deg);
-}
-
+/* Tailwind utility overrides for light mode */
 body.light-mode .text-white {
   color: var(--text-heading) !important;
 }
-
-body.light-mode .text-matrix-200 {
-  color: var(--text-muted) !important;
+body.light-mode .text-matrix-50 {
+  color: #444 !important;
 }
-
 body.light-mode .text-matrix-100 {
   color: var(--text-body) !important;
 }
-
+body.light-mode .text-matrix-200 {
+  color: var(--text-muted) !important;
+}
 body.light-mode .text-matrix-300 {
-  color: var(--text-muted) !important;
+  color: #999 !important;
 }
-
 body.light-mode .placeholder\:text-matrix-300::placeholder {
-  color: var(--text-muted) !important;
+  color: #999 !important;
+}
+body.light-mode .text-green-400 {
+  color: #16a34a !important;
+}
+body.light-mode .text-red-400 {
+  color: #dc2626 !important;
 }
 
+/* Glass panels — stronger definition on light bg */
 body.light-mode .glass {
   background: var(--glass-bg);
   border-color: var(--glass-border);
   box-shadow:
-    0 4px 24px var(--glass-shadow),
+    0 2px 12px var(--glass-shadow),
+    0 1px 3px rgba(0,0,0,0.04),
     inset 0 1px 0 var(--glass-highlight);
 }
 
+/* Buttons in light mode get a clear outline ring so they read as interactive */
+body.light-mode button.glass,
+body.light-mode button[style] {
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.12),
+    0 2px 8px rgba(0,0,0,0.07),
+    inset 0 1px 0 var(--glass-highlight);
+}
+
+/* BEGIN DECRYPTION — teal accent border + elevated shadow so it reads as the primary CTA */
+body.light-mode button.btn-begin {
+  border: 1px solid rgba(15,118,110,0.32);
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.09),
+    0 1px 3px rgba(0,0,0,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.72);
+  color: var(--text-heading);
+}
+
+body.light-mode button.btn-begin:hover:not(:disabled) {
+  border-color: rgba(15,118,110,0.50);
+  box-shadow:
+    0 6px 32px rgba(0,0,0,0.11),
+    0 0 28px rgba(15,118,110,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.82);
+}
+
+/* Hover / focus utility overrides */
+body.light-mode .focus\:ring-white\/15:focus {
+  --tw-ring-color: rgba(0, 0, 0, 0.10) !important;
+}
+body.light-mode .hover\:text-white:hover {
+  color: var(--text-heading) !important;
+}
+body.light-mode .hover\:bg-white\/10:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+body.light-mode .focus-visible\:bg-white\/\[0\.08\]:focus-visible {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Backgrounds that reference white alpha need inversion */
+body.light-mode .bg-matrix-300\/40 {
+  background-color: rgba(0, 0, 0, 0.12) !important;
+}
+body.light-mode .border-white\/20 {
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Shimmer sweep inside buttons: dark sweep on light bg */
+body.light-mode .via-white\/10 {
+  --tw-gradient-via: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* CYPHER title gradient — dark ink on light bg */
 body.light-mode .title-gradient {
-  background: linear-gradient(90deg, #1a1a2a 0%, #333345 25%, #0a0a10 50%, #2a2a3a 75%, #1a1a2a 100%);
+  background: linear-gradient(90deg, #2a2a3a 0%, #444460 25%, #151520 50%, #3a3a50 75%, #2a2a3a 100%);
   background-size: 200% 100%;
   background-clip: text;
   -webkit-background-clip: text;
@@ -98,25 +174,35 @@ body.light-mode .glitch-flash {
   text-shadow: 0 0 15px rgba(0, 0, 0, 0.3), -2px 0 rgba(100, 50, 50, 0.3), 2px 0 rgba(50, 50, 100, 0.3) !important;
 }
 
-body.light-mode .focus\:ring-white\/15:focus {
-  --tw-ring-color: rgba(0, 0, 0, 0.1) !important;
+/* CONNECTION LOST title — deeper reds that read on light bg */
+body.light-mode .connection-lost-glow {
+  background: linear-gradient(90deg, #b91c1c 0%, #dc2626 25%, #ef4444 50%, #dc2626 75%, #b91c1c 100%);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: redTitleShift 9s ease-in-out infinite, redGlowPulse 3s ease-in-out infinite;
 }
 
-body.light-mode .hover\:text-white:hover {
-  color: var(--text-heading) !important;
+/* HOW TO PLAY title — deep teal/emerald so it has real presence on warm beige */
+body.light-mode .green-title-gradient {
+  background: linear-gradient(90deg, #134e4a 0%, #0f766e 25%, #059669 50%, #0f766e 75%, #134e4a 100%);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: greenTitleShift 9s ease-in-out infinite;
 }
 
-body.light-mode .hover\:bg-white\/10:hover {
-  background-color: rgba(0, 0, 0, 0.05) !important;
+/* Tool pill hover in light mode — teal that reads on light bg */
+body.light-mode .tool-pill:hover {
+  border-color: rgba(15,118,110,0.40) !important;
+  color: rgba(15,118,110,0.95) !important;
 }
 
-body.light-mode .stat-card {
-  background: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-body.light-mode .text-red-400 {
-  color: rgb(220, 50, 50) !important;
+/* NEW BEST glow — deeper green */
+body.light-mode .new-best-glow {
+  color: #16a34a;
 }
 
 /* ===== GLASSMORPHISM ===== */
@@ -486,8 +572,16 @@ body.light-mode .text-red-400 {
 }
 
 /* ===== SETTINGS PILL ===== */
-.settings-pill {
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+/* .glass.settings-pill (0,2,0) beats body .glass (0,1,1) so transform/opacity
+   transitions aren't overwritten by the global glass crossfade rule */
+.glass.settings-pill {
+  transition:
+    background-color 1.2s ease,
+    border-color 1.0s ease,
+    color 0.8s ease,
+    box-shadow 1.0s ease,
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease;
 }
 
 .settings-pill.hidden-pill {

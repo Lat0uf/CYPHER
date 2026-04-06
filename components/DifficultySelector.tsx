@@ -13,6 +13,11 @@ interface Option {
     pillBorder: string;
     pillColor: string;
     cardShadow: string;
+    lightAccent: string;
+    lightLabelColor: string;
+    lightPillBorder: string;
+    lightPillColor: string;
+    lightCardShadow: string;
 }
 
 const OPTIONS: Option[] = [
@@ -26,18 +31,28 @@ const OPTIONS: Option[] = [
         pillBorder: 'rgba(96, 165, 250, 0.28)',
         pillColor: 'rgba(147, 197, 253, 0.65)',
         cardShadow: '0 4px 14px rgba(0,0,0,0.50), 0 0 0 1px rgba(96,165,250,0.15)',
+        // Light mode variants
+        lightAccent: 'rgba(59, 130, 246, 0.10)',
+        lightLabelColor: 'rgba(30, 80, 180, 0.95)',
+        lightPillBorder: 'rgba(59, 130, 246, 0.25)',
+        lightPillColor: 'rgba(30, 80, 180, 0.65)',
+        lightCardShadow: '0 3px 12px rgba(0,0,0,0.09), 0 1px 3px rgba(0,0,0,0.05)',
     },
     {
         value: 'normal',
         label: 'Normal',
         description: 'One tool per puzzle. Fast fingers and a good decoder site will carry you.',
         pills: ['BINARY', 'MORSE', 'CAESAR', 'BASE64', 'ROT13', 'ATBASH'],
-        // Cool silver-blue: distinct from grey UI chrome, sits naturally between blue and red
         accent: 'rgba(180, 200, 230, 0.14)',
         labelColor: 'rgba(195, 215, 240, 0.90)',
         pillBorder: 'rgba(180, 200, 230, 0.22)',
         pillColor: 'rgba(195, 215, 240, 0.60)',
         cardShadow: '0 4px 14px rgba(0,0,0,0.50), 0 0 0 1px rgba(180,200,230,0.12)',
+        lightAccent: 'rgba(100, 120, 160, 0.08)',
+        lightLabelColor: 'rgba(50, 60, 90, 0.90)',
+        lightPillBorder: 'rgba(80, 100, 140, 0.22)',
+        lightPillColor: 'rgba(50, 60, 90, 0.55)',
+        lightCardShadow: '0 3px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04)',
     },
     {
         value: 'hard',
@@ -49,6 +64,11 @@ const OPTIONS: Option[] = [
         pillBorder: 'rgba(248, 113, 113, 0.28)',
         pillColor: 'rgba(252, 165, 165, 0.65)',
         cardShadow: '0 4px 14px rgba(0,0,0,0.50), 0 0 0 1px rgba(248,113,113,0.15)',
+        lightAccent: 'rgba(220, 50, 50, 0.08)',
+        lightLabelColor: 'rgba(180, 30, 30, 0.95)',
+        lightPillBorder: 'rgba(220, 50, 50, 0.25)',
+        lightPillColor: 'rgba(180, 30, 30, 0.60)',
+        lightCardShadow: '0 3px 12px rgba(0,0,0,0.09), 0 1px 3px rgba(0,0,0,0.05)',
     },
 ];
 
@@ -68,6 +88,15 @@ interface Props {
 
 export default function DifficultySelector({ value, onChange, disabled = false }: Props) {
     const [hovered,  setHovered]  = useState<Difficulty | null>(null);
+    const [isLight,  setIsLight]  = useState(false);
+
+    useEffect(() => {
+        const check = () => setIsLight(document.body.classList.contains('light-mode'));
+        check();
+        const obs = new MutationObserver(check);
+        obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+        return () => obs.disconnect();
+    }, []);
 
     const lastChangeRef = useRef(0);
     const prevIdxRef    = useRef(OPTIONS.findIndex(o => o.value === value));
@@ -93,9 +122,9 @@ export default function DifficultySelector({ value, onChange, disabled = false }
         letterSpacing: '0.07em',
         padding:       '2px 8px',
         borderRadius:  '999px',
-        border:        `1px solid ${opt.pillBorder}`,
-        color:         opt.pillColor,
-        background:    'rgba(255,255,255,0.03)',
+        border:        `1px solid ${isLight ? opt.lightPillBorder : opt.pillBorder}`,
+        color:         isLight ? opt.lightPillColor : opt.pillColor,
+        background:    isLight ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.03)',
         whiteSpace:    'nowrap' as const,
     });
 
@@ -114,7 +143,7 @@ export default function DifficultySelector({ value, onChange, disabled = false }
 
             <p
                 className="font-mono text-xs uppercase text-center mb-3"
-                style={{ color: 'rgba(150,150,150,0.65)', letterSpacing: '0.25em' }}
+                style={{ color: isLight ? 'rgba(80,80,80,0.65)' : 'rgba(150,150,150,0.65)', letterSpacing: '0.25em' }}
             >
                 Select Difficulty
             </p>
@@ -206,7 +235,9 @@ export default function DifficultySelector({ value, onChange, disabled = false }
                                 fontWeight:    600,
                                 fontSize:      '0.82rem',
                                 letterSpacing: '0.02em',
-                                color:         isHov ? 'rgba(205,205,205,0.88)' : 'rgba(125,125,125,0.62)',
+                                color:         isHov
+                                    ? (isLight ? 'rgba(30,30,30,0.92)' : 'rgba(205,205,205,0.88)')
+                                    : (isLight ? 'rgba(80,80,80,0.72)' : 'rgba(125,125,125,0.62)'),
                                 transition:    'color 0.18s ease',
                                 userSelect:    'none',
                                 whiteSpace:    'nowrap',
@@ -228,7 +259,7 @@ export default function DifficultySelector({ value, onChange, disabled = false }
                         zIndex:               1,
                         borderRadius:         OUTER_R,
                         border:               BORDER,
-                        boxShadow:            selOpt.cardShadow,
+                        boxShadow:            isLight ? selOpt.lightCardShadow : selOpt.cardShadow,
                         overflow:             'hidden',
                         // transform instead of left/right, GPU composited, no blur repaint
                         transform:            `translateX(${selIdx * STUB_W}px)`,
@@ -241,7 +272,7 @@ export default function DifficultySelector({ value, onChange, disabled = false }
                 >
                     <div
                         style={{
-                            background:    selOpt.accent,
+                            background:    isLight ? selOpt.lightAccent : selOpt.accent,
                             height:        '100%',
                             paddingTop:    '0.82rem',
                             paddingBottom: '1rem',
@@ -259,7 +290,7 @@ export default function DifficultySelector({ value, onChange, disabled = false }
                                 fontWeight:    700,
                                 fontSize:      '1.2rem',
                                 letterSpacing: '-0.01em',
-                                color:         selOpt.labelColor,
+                                color:         isLight ? selOpt.lightLabelColor : selOpt.labelColor,
                                 display:       'block',
                                 marginBottom:  '0.4rem',
                                 lineHeight:    1.15,
@@ -272,7 +303,7 @@ export default function DifficultySelector({ value, onChange, disabled = false }
                             <p style={{
                                 fontFamily:   "'JetBrains Mono', 'Courier New', monospace",
                                 fontSize:     '10.5px',
-                                color:        'rgba(175,175,175,0.70)',
+                                color:        isLight ? 'rgba(80,80,80,0.75)' : 'rgba(175,175,175,0.70)',
                                 lineHeight:   1.72,
                                 marginBottom: '0.6rem',
                             }}>

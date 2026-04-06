@@ -103,7 +103,7 @@ export default function HeroSection({
                     subtitleTimerRef.current = setTimeout(next, delay);
                 } else {
                     phase = 'pausing';
-                    subtitleTimerRef.current = setTimeout(next, 3200 + Math.random() * 1800);
+                    subtitleTimerRef.current = setTimeout(next, 1400 + Math.random() * 600);
                 }
             } else if (phase === 'pausing') {
                 phase = 'deleting';
@@ -117,7 +117,7 @@ export default function HeroSection({
                 } else {
                     phase = 'waiting';
                     setShowCursor(false);
-                    subtitleTimerRef.current = setTimeout(next, 2200 + Math.random() * 1800);
+                    subtitleTimerRef.current = setTimeout(next, 800 + Math.random() * 600);
                 }
             } else {
                 phase = 'typing';
@@ -236,7 +236,7 @@ export default function HeroSection({
 
                 <p
                     className="font-mono text-matrix-100 text-lg tracking-wide"
-                    style={{ minHeight: '1.75rem' }}
+                    style={{ minHeight: '1.75rem', color: isLightMode ? 'rgba(60,60,60,0.8)' : undefined }}
                 >
                     {subtitleDisplay}
                     {showCursor && subtitleDisplay.length > 0 && (
@@ -264,8 +264,10 @@ export default function HeroSection({
                 className="btn-press glass px-16 py-6 text-2xl font-display font-semibold
                     text-white hover:text-white
                     disabled:opacity-50 disabled:cursor-not-allowed
-                    relative overflow-hidden group"
-                style={{
+                    relative overflow-hidden group btn-begin"
+                style={isLightMode ? {
+                    willChange: 'transform',
+                } : {
                     border: '1px solid rgba(255,255,255,0.38)',
                     boxShadow: '0 8px 32px var(--glass-shadow), 0 0 18px rgba(255,255,255,0.07), inset 0 1px 0 var(--glass-highlight)',
                     textShadow: '0 0 12px rgba(255,255,255,0.2)',
@@ -300,7 +302,9 @@ export default function HeroSection({
                     <p
                         className="font-mono text-xs transition-colors duration-200"
                         style={{
-                            color: showReset ? 'rgba(200,200,200,0.85)' : 'rgba(140,140,140,0.6)',
+                            color: showReset
+                                ? (isLightMode ? 'rgba(50,50,50,0.85)' : 'rgba(200,200,200,0.85)')
+                                : (isLightMode ? 'rgba(100,100,100,0.6)' : 'rgba(140,140,140,0.6)'),
                             letterSpacing: '0.08em',
                             whiteSpace: 'nowrap',
                             cursor: 'default',

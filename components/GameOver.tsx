@@ -3,6 +3,7 @@
 import type { Difficulty } from '@/lib/gameState';
 import { formatTime } from '@/lib/gameState';
 import { playClick } from '@/lib/useSound';
+import { useState, useEffect } from 'react';
 
 interface GameOverModalProps {
     score: number;
@@ -21,6 +22,22 @@ export default function GameOver({
     isNewBest = false, previousBest = null,
     onPlayAgain, onChangeDifficulty,
 }: GameOverModalProps) {
+    const [isLight, setIsLight] = useState(false);
+    useEffect(() => {
+        const check = () => setIsLight(document.body.classList.contains('light-mode'));
+        check();
+        const obs = new MutationObserver(check);
+        obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+        return () => obs.disconnect();
+    }, []);
+
+    const btnBorder = isLight ? undefined : '1px solid rgba(255,255,255,0.38)';
+    const btnShadow = isLight
+        ? undefined
+        : '0 0 18px rgba(255,255,255,0.07), inset 0 1px 0 var(--glass-highlight)';
+    const btnTextShadow = isLight ? 'none' : '0 0 12px rgba(255,255,255,0.15)';
+    const cardBorder = isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(255,255,255,0.09)';
+
     return (
         <div
             className="w-full flex flex-col items-center max-w-xl mx-auto px-4"
@@ -59,7 +76,7 @@ export default function GameOver({
                     className="glass flex flex-col items-center justify-center py-5 px-2 text-center"
                     style={{
                         borderRadius: '1.25rem',
-                        border: '1px solid rgba(255,255,255,0.09)',
+                        border: cardBorder,
                         animation: 'statFadeIn 0.4s ease-out 0.25s both',
                     }}
                 >
@@ -86,7 +103,7 @@ export default function GameOver({
                         className="glass flex flex-col items-center justify-center py-5 px-2 text-center"
                         style={{
                             borderRadius: '1.25rem',
-                            border: '1px solid rgba(255,255,255,0.09)',
+                            border: cardBorder,
                             animation: `statFadeIn 0.4s ease-out ${0.32 + i * 0.07}s both`,
                         }}
                     >
@@ -105,14 +122,14 @@ export default function GameOver({
             >
                 <button
                     onClick={() => { playClick(); onPlayAgain(); }}
-                    className="btn-press flex-1 py-4 font-display font-semibold text-white text-base tracking-widest relative overflow-hidden group"
+                    className="btn-press btn-begin flex-1 py-4 font-display font-semibold text-white text-base tracking-widest relative overflow-hidden group"
                     style={{
                         borderRadius: '1.25rem',
                         background: 'var(--glass-bg)',
-                        border: '1px solid rgba(255,255,255,0.38)',
-                        boxShadow: '0 0 18px rgba(255,255,255,0.07), inset 0 1px 0 var(--glass-highlight)',
+                        border: btnBorder,
+                        boxShadow: btnShadow,
                         willChange: 'transform',
-                        textShadow: '0 0 12px rgba(255,255,255,0.15)',
+                        textShadow: btnTextShadow,
                     }}
                 >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
@@ -121,14 +138,14 @@ export default function GameOver({
 
                 <button
                     onClick={() => { playClick(); onChangeDifficulty(); }}
-                    className="btn-press flex-1 py-4 font-display font-semibold text-white text-base tracking-widest relative overflow-hidden group"
+                    className="btn-press btn-begin flex-1 py-4 font-display font-semibold text-white text-base tracking-widest relative overflow-hidden group"
                     style={{
                         borderRadius: '1.25rem',
                         background: 'var(--glass-bg)',
-                        border: '1px solid rgba(255,255,255,0.38)',
-                        boxShadow: '0 0 18px rgba(255,255,255,0.07), inset 0 1px 0 var(--glass-highlight)',
+                        border: btnBorder,
+                        boxShadow: btnShadow,
                         willChange: 'transform',
-                        textShadow: '0 0 12px rgba(255,255,255,0.15)',
+                        textShadow: btnTextShadow,
                     }}
                 >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
