@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="icon.png" width="72" alt="CYPHER logo" />
+
 # CYPHER
 
 A cipher-breaking browser game where using external decoder tools isn't cheating. It's the whole point.
@@ -36,7 +38,7 @@ You have to manually type it into your decoder. Recommended tools: [CyberChef](h
 
 ## 🔮 The experience
 
-The matrix rain background shifts color with difficulty: blue on Easy, neutral on Normal, red on Hard. Every page transition, score popup, timer pulse, and feedback flash is animated to feel cohesive rather than bolted on. The rain also reacts to your mouse, a subtle parallax that adds depth without being distracting. 
+The matrix rain background shifts color with difficulty: blue on Easy, neutral on Normal, red on Hard. Every page transition, score popup, timer pulse, and feedback flash is animated to feel cohesive rather than bolted on. The rain also reacts to your mouse, a subtle parallax that adds depth without being distracting.
 
 Occasionally a rare phrase surfaces as a white column in the rain, there are over 10 of them with weighted rarity so repeats stay rare. If motion isn't your thing, there's an accessibility toggle that cuts all animations globally.
 
@@ -71,13 +73,13 @@ Light mode exists too (who even uses light mode though).
 
 ## 🚧 Known issues and planned work
 
-Things that are half-baked or just need more attention:
+Things that are not quite there yet or still need attention:
 
-- Light mode needs a full rework to actually look good and be readable
-- The difficulty selector has a jittery slide animation that has resisted every fix attempt so far
-- The BEGIN DECRYPTION button doesn't sit well with the rest of the UI and needs a rework
-- The Connection Lost screen buttons blend into the stat cards and don't feel like actual buttons
-- Sound design needs a balancing pass and a few more effects in the right places
-- Matrix rain needs improvement and polishing
-- Game design pass needed across all difficulties, more playtesting and better pacing
-- General code cleanup and optimization
+- [x] Light mode needs a full rework to actually look good and be readable
+- [x] The mouse parallax on the rain feels cheap rather than satisfying and needs proper tuning
+- [x] The Connection Lost screen buttons blend into the stat cards and don't feel like actual buttons
+- [x] Matrix rain needs improvement and polishing
+- [ ] The difficulty selector has a jittery slide animation that has resisted every fix attempt so far
+- [ ] Sound design needs a balancing pass and a few more effects in the right places
+- [ ] Game design pass needed across all difficulties, more playtesting and better pacing
+- [ ] General code cleanup and optimization
